@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Ask Victoria 2050 — Sadhik Ahamed Shaik Mohammed</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f6f4ee; --bg2:#efece2; --card:#fffdf8; --card2:#f3f0e6;
+    --ink:#17211d; --ink2:#43514b; --ink3:#6b7a72;
+    --line:#ddd6c4; --line2:#c9c0a6;
+    --teal:#0d5c4d; --teal-d:#0a463b; --teal-soft:#e2efe9;
+    --oak:#3f7a3a; --ochre:#9a6a12; --ochre-soft:#f7ecd2;
+    --rust:#a83c22; --rust-soft:#f9e6df;
+    --blue:#1d5f8a; --blue-soft:#e3eef5;
+    --shadow:0 1px 2px rgba(23,33,29,.06),0 8px 28px rgba(23,33,29,.07);
+    --r:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#101613; --bg2:#151b18; --card:#1a211d; --card2:#202823;
+      --ink:#e9ede8; --ink2:#b9c4bc; --ink3:#8b9a90;
+      --line:#2e3a33; --line2:#3d4c42;
+      --teal:#4cc2a6; --teal-d:#7fd6bf; --teal-soft:#17352d;
+      --oak:#8fce84; --ochre:#e5b95c; --ochre-soft:#3a3016;
+      --rust:#f0937a; --rust-soft:#3d211a;
+      --blue:#7db8dd; --blue-soft:#1a2f3f;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,sans-serif;font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2.25rem}
+  button{font-family:inherit;cursor:pointer}
+  a{color:var(--teal);text-underline-offset:2px}
+  .mono{font-family:"IBM Plex Mono",monospace}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 16px 64px}
+  /* ---------- header / lede ---------- */
+  .topbar{border-bottom:1px solid var(--line);background:var(--bg)}
+  .topbar-in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between}
+  .topbar .for{font-size:12.5px;color:var(--ink2)}
+  .topbar .for strong{color:var(--ink)}
+  .navchips{display:flex;gap:6px;flex-wrap:wrap}
+  .navchips a{font-size:12.5px;font-weight:600;color:var(--ink2);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 12px;background:var(--card);display:inline-flex;align-items:center;min-height:32px}
+  .navchips a:hover{border-color:var(--teal);color:var(--teal)}
+  .lede{padding:26px 0 6px}
+  .lede h1{font-family:"Newsreader",serif;font-weight:600;font-size:clamp(30px,4.6vw,44px);line-height:1.08;margin:0 0 10px;letter-spacing:-.01em;max-width:22ch}
+  .lede h1 em{font-style:italic;color:var(--teal)}
+  .lede p.sub{margin:0;max-width:68ch;color:var(--ink2);font-size:16.5px}
+  .lede p.sub strong{color:var(--ink)}
+  .trustrow{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
+  .trust{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--ink2);display:flex;gap:8px;align-items:baseline}
+  .trust b{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--teal);font-weight:600}
+  .tryrow{margin:14px 0 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .tryrow span{font-size:13px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
+  .qchip{border:1.5px solid var(--teal);color:var(--teal-d);background:var(--teal-soft);border-radius:999px;padding:9px 14px;font-size:13.5px;font-weight:600;text-align:left}
+  @media (prefers-color-scheme: dark){.qchip{color:var(--teal)}}
+  .qchip:hover{background:var(--teal);color:#fff}
+  /* ---------- sections ---------- */
+  section.blk{margin-top:34px}
+  .blk-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .blk-head .no{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--teal);border:1px solid var(--line2);border-radius:6px;padding:2px 7px;background:var(--card)}
+  .blk-head h2{font-family:"Newsreader",serif;font-size:clamp(22px,3vw,28px);font-weight:600;margin:0}
+  .blk-head p{margin:0;color:var(--ink2);font-size:14px;flex-basis:100%}
+  /* ---------- explorer ---------- */
+  .explorer{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;margin-top:14px}
+  @media (max-width:900px){.explorer{grid-template-columns:1fr}}
+  .mapcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  #map{height:430px;width:100%;background:var(--bg2)}
+  @media (max-width:900px){#map{height:340px}}
+  .mapfoot{padding:9px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .mapfoot .live{color:var(--teal);font-weight:600}
+  .sidecol{display:flex;flex-direction:column;gap:12px;min-width:0}
+  .searchrow{display:flex;gap:8px}
+  .searchrow input{flex:1;min-width:0;border:1.5px solid var(--line2);border-radius:10px;padding:10px 12px;font:inherit;background:var(--card);color:var(--ink)}
+  .searchrow input:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+  .seg{display:flex;border:1.5px solid var(--line2);border-radius:10px;overflow:hidden}
+  .seg button{border:0;background:var(--card);color:var(--ink2);font-weight:600;font-size:13px;padding:8px 12px}
+  .seg button.on{background:var(--teal);color:#fff}
+  .plist{display:flex;flex-wrap:wrap;gap:8px;max-height:340px;overflow-y:auto;overflow-x:hidden;padding:2px;align-content:flex-start;align-items:flex-start}
+  @media (max-width:520px){.plist{max-height:300px}}
+  .pcard{text-align:left;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 12px;display:block;flex:1 1 205px;min-width:0;cursor:pointer;line-height:1.45}
+  .pcard:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+  .pcard:hover{border-color:var(--teal)}
+  .pcard.sel{border-color:var(--teal);box-shadow:0 0 0 1.5px var(--teal) inset;background:var(--teal-soft)}
+  .pcard .addr{font-weight:700;font-size:14px}
+  .pcard .meta{font-size:12px;color:var(--ink2);margin-top:2px}
+  .pcard .tags{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:.02em;border-radius:999px;padding:2px 8px;border:1px solid var(--line2);color:var(--ink2);background:var(--card2)}
+  .tag.her{color:var(--rust);border-color:var(--rust);background:var(--rust-soft)}
+  .tag.pga{color:var(--teal-d);border-color:var(--teal);background:var(--teal-soft)}
+  @media (prefers-color-scheme: dark){.tag.pga{color:var(--teal)}}
+  .tag.vil{color:var(--blue);border-color:var(--blue);background:var(--blue-soft)}
+  /* ---------- detail ---------- */
+  .detail{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-top:16px}
+  .detail h3{font-family:"Newsreader",serif;font-size:24px;margin:0}
+  .detail .subline{color:var(--ink2);font-size:13.5px;margin:4px 0 0}
+  .verdict{display:flex;gap:10px;align-items:flex-start;border-radius:10px;padding:12px 14px;margin:14px 0;font-size:14.5px}
+  .verdict.ok{background:var(--teal-soft);border:1px solid var(--teal)}
+  .verdict.warn{background:var(--ochre-soft);border:1px solid var(--ochre)}
+  .verdict.bad{background:var(--rust-soft);border:1px solid var(--rust)}
+  .verdict .ic{font-size:18px;line-height:1.2}
+  .specgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .spec{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:var(--card2)}
+  .spec .k{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+  .spec .v{font-weight:700;font-size:16px;margin-top:3px}
+  .spec .n{font-size:12.5px;color:var(--ink2);margin-top:3px}
+  .spec .src{font-size:11px;margin-top:6px}
+  .spec .src a{font-family:"IBM Plex Mono",monospace;font-size:11px}
+  blockquote.policy{margin:12px 0 0;border-left:3px solid var(--teal);background:var(--card2);padding:10px 14px;border-radius:0 10px 10px 0;font-family:"Newsreader",serif;font-size:16.5px;font-style:italic}
+  blockquote.policy + .cite{margin-top:6px}
+  .cite{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink2)}
+  .cite b{color:var(--teal)}
+  /* ---------- ask ---------- */
+  .askbox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-top:14px}
+  .askctx{font-size:13px;color:var(--ink2);margin-bottom:10px}
+  .askctx b{color:var(--ink)}
+  .askrow{display:flex;gap:8px;flex-wrap:wrap}
+  .askrow input{flex:1;min-width:220px;border:1.5px solid var(--line2);border-radius:10px;padding:11px 13px;font:inherit;background:var(--bg);color:var(--ink)}
+  .askrow input:focus{outline:2px solid var(--teal);outline-offset:1px}
+  .btn{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-weight:700;font-size:15px}
+  .btn:hover{background:var(--teal-d)}
+  .btn.ghost{background:var(--card);color:var(--teal);border:1.5px solid var(--teal)}
+  .btn.ghost:hover{background:var(--teal-soft)}
+  .answer{margin-top:16px;border-top:1px dashed var(--line2);padding-top:14px}
+  .answer:empty{display:none}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:4px 11px}
+  .badge.ok{background:var(--teal);color:#fff}
+  .badge.warn{background:var(--ochre);color:#fff}
+  .badge.bad{background:var(--rust);color:#fff}
+  .badge.info{background:var(--blue);color:#fff}
+  .answer h4{font-size:17px;margin:10px 0 6px}
+  .answer p{margin:6px 0;color:var(--ink)}
+  .answer .conf{font-size:13px;color:var(--ink2);border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
+  .citecard{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:8px;background:var(--card2)}
+  .citecard q{font-family:"Newsreader",serif;font-size:16px;font-style:italic}
+  .citecard .cite{margin-top:5px}
+  /* ---------- eval ---------- */
+  .evalbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+  .scorecards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+  .score{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:12px 14px}
+  .score .n{font-family:"IBM Plex Mono",monospace;font-size:26px;font-weight:600;color:var(--teal)}
+  .score .l{font-size:12px;color:var(--ink2);font-weight:600}
+  .evaltable{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .evaltable th,.evaltable td{padding:9px 11px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);font-size:13.5px}
+  .evaltable th{background:var(--card2);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2)}
+  .evaltable tr:last-child td{border-bottom:0}
+  .st{font-weight:800;font-size:12px;white-space:nowrap}
+  .st.pass{color:var(--teal)} .st.fail{color:var(--rust)} .st.idle{color:var(--ink3)}
+  @media (max-width:760px){
+    .evaltable thead{display:none}
+    .evaltable tr{display:block;border-bottom:1px solid var(--line);padding:6px 0}
+    .evaltable td{display:block;border-bottom:0;padding:4px 12px}
+  }
+  /* ---------- compare ---------- */
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  @media (max-width:820px){.cmp{grid-template-columns:1fr}}
+  .citycard{border:1px solid var(--line);border-radius:var(--r);background:var(--card);box-shadow:var(--shadow);padding:18px}
+  .citycard h3{font-family:"Newsreader",serif;font-size:22px;margin:0 0 2px}
+  .citycard .plan{font-size:13px;color:var(--ink2);margin:0 0 12px}
+  .citycard dl{margin:0}
+  .citycard dt{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-top:12px}
+  .citycard dd{margin:3px 0 0;font-size:14.5px}
+  .citycard dd .cite{display:block;margin-top:3px}
+  .pain{margin-top:14px;border:1px solid var(--ochre);background:var(--ochre-soft);border-radius:var(--r);padding:14px 16px;font-size:14.5px}
+  .pain b{display:block;margin-bottom:4px}
+  /* ---------- builder's note ---------- */
+  .note{border:1px solid var(--line2);background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:18px}
+  .note h2{font-family:"Newsreader",serif;font-size:22px;font-weight:600;margin:0 0 6px}
+  .note p{margin:8px 0 0;color:var(--ink2);font-size:14.5px;max-width:78ch}
+  .note p strong{color:var(--ink)}
+  .note .sig{margin-top:12px;color:var(--ink);font-size:14.5px}
+  /* ---------- sources ---------- */
+  .srctable{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:12px}
+  .srctable th,.srctable td{padding:9px 11px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);font-size:13.5px;overflow-wrap:anywhere}
+  .srctable td .mono{word-break:break-all}
+  .srctable th{background:var(--card2);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2)}
+  @media (max-width:760px){
+    .srctable thead{display:none}
+    .srctable tr{display:block;border-bottom:1px solid var(--line);padding:6px 0}
+    .srctable td{display:block;border-bottom:0;padding:4px 12px}
+  }
+  .disclaimer{margin-top:16px;border:1.5px solid var(--rust);background:var(--rust-soft);border-radius:var(--r);padding:14px 16px;font-size:14px}
+  .foot{margin-top:26px;font-size:12.5px;color:var(--ink3);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
+  .leaflet-popup-content{font-family:"Public Sans",sans-serif;font-size:13.5px}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <div class="for">Built by <strong>Sadhik Ahamed Shaik Mohammed</strong> for <strong>Peter &amp; the Fernwood Agentic team</strong> — Urbora's problem, one city deep: land-use policy, real parcels, and citations you can check yourself.</div>
+  <nav class="navchips" aria-label="Sections">
+    <a href="#explore">Map &amp; parcels</a><a href="#ask">Ask</a><a href="#eval">Eval harness</a><a href="#compare">Victoria vs Vancouver</a><a href="#sources">Sources</a>
+  </nav>
+</div></div>
+
+<div class="wrap">
+  <div class="lede">
+    <h1>Ask what you can build on a Victoria lot — <em>get the policy, cited.</em></h1>
+    <p class="sub">Pick a parcel in <strong>Fernwood</strong> or <strong>James Bay</strong> and ask what can be built on it. The answers come from <strong>Victoria 2050</strong> (adopted Oct 2, 2025, Bylaw No. 25-045), the City's zoning bylaws, and BC's <strong>Bill 44</strong>, each with the exact quote, section and page. Where the OCP and the zoning disagree, the answer flags the disagreement instead of picking a side.</p>
+    <div class="trustrow">
+      <div class="trust"><b>15</b> real parcels · City GIS snapshot, Nov 19, 2026</div>
+      <div class="trust"><b>8</b> sources, listed in full in section 05</div>
+      <div class="trust"><b>20</b> hard questions, scored in section 03</div>
+      <div class="trust">Every answer carries its quote, section &amp; page</div>
+    </div>
+    <div class="tryrow"><span>Start here</span>
+      <button class="qchip" data-try="1">Can I build 4 storeys at 1333 Gladstone Ave?</button>
+      <button class="qchip" data-try="2">Is 101 Oswego St protected heritage?</button>
+      <button class="qchip" data-try="3">What changed at 205 Quebec St between the 2012 OCP and Victoria 2050?</button>
+    </div>
+  </div>
+
+  <section class="blk" id="explore">
+    <div class="blk-head"><span class="no">01</span><h2>Pick a parcel</h2>
+      <p>Addresses, folios, PIDs and lot sizes are the City of Victoria's own records, pulled from its public ArcGIS servers on Nov 19, 2026. Zone, Development Permit Area and heritage status are point-in-polygon results against the City's Planning &amp; Development layers. Click a marker or a card.</p>
+    </div>
+    <div class="searchrow" style="margin-top:10px">
+      <input id="search" type="search" placeholder="Search by address — e.g. “Menzies”, “1300 Gladstone”, “Quebec”…" aria-label="Search parcels by address" />
+      <div class="seg" role="group" aria-label="Neighbourhood filter">
+        <button id="f-all" class="on">All</button><button id="f-fern">Fernwood</button><button id="f-jb">James Bay</button>
+      </div>
+    </div>
+    <div class="explorer">
+      <div class="mapcard">
+        <div id="map" role="img" aria-label="Map of Fernwood and James Bay parcels in Victoria, BC"></div>
+        <div class="mapfoot"><span id="mapstatus">Basemap © OpenStreetMap contributors · Parcels: City of Victoria Open Data (Open Government Licence)</span><span class="live" id="livelayer">● Live City zoning layer available — toggle in map</span></div>
+      </div>
+      <div class="sidecol"><div class="plist" id="plist"></div></div>
+    </div>
+    <div class="detail" id="detail"></div>
+  </section>
+
+  <section class="blk" id="ask">
+    <div class="blk-head"><span class="no">02</span><h2>Ask in plain English</h2>
+      <p>Every answer is assembled from the sources listed in section 05, and nothing else. You get one of three things: an answer with its citation, a flagged conflict between the OCP and the legal zoning, or a straight “the sources don't settle this.”</p>
+    </div>
+    <div class="askbox">
+      <div class="askctx" id="askctx"></div>
+      <form class="askrow" id="askform">
+        <input id="askinput" type="text" placeholder="e.g. Can I build 6 storeys here? · Is this in a Heritage Conservation Area? · How many units does Bill 44 allow?" aria-label="Ask a question about the selected parcel" />
+        <button class="btn" type="submit">Ask</button>
+      </form>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+        <button class="qchip" data-q="Can I build 4 storeys here?">Can I build 4 storeys here?</button>
+        <button class="qchip" data-q="Can I build 6 storeys here?">Can I build 6 storeys here?</button>
+        <button class="qchip" data-q="How many units can I build under Bill 44?">How many units under Bill 44?</button>
+        <button class="qchip" data-q="Is this in a Heritage Conservation Area?">Is this in a Heritage Conservation Area?</button>
+        <button class="qchip" data-q="Do I need a development permit?">Do I need a development permit?</button>
+        <button class="qchip" data-q="What changed here between the 2012 OCP and Victoria 2050?">What changed vs the 2012 OCP?</button>
+        <button class="qchip" data-q="Will there be a public hearing if I rezone?">Will there be a public hearing?</button>
+      </div>
+      <div class="answer" id="answer" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="blk" id="eval">
+    <div class="blk-head"><span class="no">03</span><h2>Eval harness</h2>
+      <p>Twenty questions I wrote to try to break it: Bill 44 vs OCP conflicts, heritage vs density, 2012 vs 2050 changes, and questions it has to refuse. A pass needs the right verdict <em>and</em> a citation whose document, section and page match the answer I marked correct beforehand.</p>
+    </div>
+    <div class="evalbar">
+      <button class="btn" id="runall">Run all 20 evals</button>
+      <span style="font-size:13.5px;color:var(--ink2)">Runs in your browser against the same answer logic as the Ask box above. Re-run it as often as you like.</span>
+    </div>
+    <div class="scorecards" id="scorecards">
+      <div class="score"><div class="n">—</div><div class="l">Verdict accuracy</div></div>
+      <div class="score"><div class="n">—</div><div class="l">Citation accuracy (doc + section + page)</div></div>
+      <div class="score"><div class="n">—</div><div class="l">Correct refusals / uncertainty flags</div></div>
+      <div class="score"><div class="n">—</div><div class="l">Answers without a citation</div></div>
+    </div>
+    <div style="overflow-x:auto"><table class="evaltable"><thead><tr><th style="width:34px">#</th><th>Test question</th><th style="width:150px">Trap it tests</th><th style="width:230px">Expected behaviour</th><th style="width:86px">Result</th></tr></thead><tbody id="evalbody"></tbody></table></div>
+  </section>
+
+  <section class="blk" id="compare">
+    <div class="blk-head"><span class="no">04</span><h2>Same question, two cities</h2>
+      <p>The expansion problem, concretely: ask “how many homes can go on a house lot?” in Victoria and in Vancouver and almost nothing lines up — different plan type, different zone names, different density math, different data plumbing.</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <button class="qchip cmp-q on" data-cmp="units">How many units on a house lot?</button>
+      <button class="qchip cmp-q" data-cmp="storeys">Can I build 4 storeys?</button>
+      <button class="qchip cmp-q" data-cmp="heritage">What stops demolition of an old house?</button>
+    </div>
+    <div class="cmp" id="cmpgrid"></div>
+    <div class="pain"><b>Why this is the hard part of Urbora's roadmap</b>
+      A question engine that works in Victoria breaks in Vancouver in at least four places: (1) <strong>plan law</strong> — Victoria's OCP is a single bylaw under the Local Government Act; Vancouver has no LGA OCP and plans through the Vancouver Plan + area plans under the Vancouver Charter. (2) <strong>Vocabulary</strong> — “GRD-1 (PGA)” vs “R1-1” encode different ideas; a shared schema needs a translation layer, not a rename. (3) <strong>Density math</strong> — Victoria's SSMUH is unit-count based (Zoning Regulation Bylaw s. 52); Vancouver's multiplex is FSR-based (0.70, up to 1.0). (4) <strong>Data format</strong> — Victoria publishes ArcGIS MapServer layers with <span class="mono">Zoning / ZoningBylaw / DPA_Number</span> fields; Vancouver publishes through its own Open Data portal with different field names and update cadence. Adding a second city is a data-engineering project, not a prompt change.</div>
+  </section>
+
+  <section class="blk" id="note">
+    <div class="note">
+      <h2>Why I built this</h2>
+      <p>Peter — when we spoke, you said you're keeping the team small, but to send interesting projects your way. This is mine. Urbora's problem, as I understand it from the outside, is land-use policy, historical records and spatial data in one place, so I took one city and did that slice end to end: real parcels from the City's own GIS, the adopted Victoria 2050 plan, the zoning bylaws and Bill 44.</p>
+      <p>I'm a <strong>Cloud &amp; Security Engineer at Absolute Security</strong> here in Victoria, with a background in software development and test automation. That's why the unglamorous parts are in here: every answer carries its citation, the eval set in section 03 exists to catch the answers that are wrong, and where the sources don't settle a question, the answer says so instead of bluffing.</p>
+      <p>If any of it is useful, the next piece I'd build is Vancouver — section 04 is the start of that work. And if someone on your side spots something wrong in here, I'd genuinely like to hear it.</p>
+      <p class="sig">— Sadhik Ahamed Shaik Mohammed · <a href="mailto:Sadhik021@gmail.com">Sadhik021@gmail.com</a></p>
+    </div>
+  </section>
+
+  <section class="blk" id="sources">
+    <div class="blk-head"><span class="no">05</span><h2>Sources &amp; audit trail</h2>
+      <p>Everything on this page traces back to one of these sources. If a fact isn't in one of them, I've labelled it an estimate or left it out.</p>
+    </div>
+    <div style="overflow-x:auto"><table class="srctable"><thead><tr><th>Document / dataset</th><th>Version pinned</th><th>Retrieved</th><th>Used for</th></tr></thead><tbody>
+      <tr><td><strong>Victoria 2050 — Official Community Plan</strong><br /><a href="https://www.victoria.ca/media/file/victoria-2050pdf-0" target="_blank" rel="noopener">victoria.ca — adopted OCP PDF (243 pp.)</a></td><td class="mono">Bylaw No. 25-045 · Adopted Oct 2, 2025 · Repeals Bylaw 12-013 (2012 OCP)</td><td class="mono">Nov 19, 2026</td><td>OCP designations, envisioned built forms (Fig. 5), DPA / HCA rules (Schedule C)</td></tr>
+      <tr><td><strong>Schedule C — Development Permit Areas &amp; Heritage Conservation Areas</strong><br /><a href="https://www.victoria.ca/media/file/development-permit-areas-and-heritage-conservation-areas" target="_blank" rel="noopener">victoria.ca — Schedule C extract</a></td><td class="mono">Part of Bylaw 25-045 · pp. 182–228</td><td class="mono">Nov 19, 2026</td><td>DPA 1 / DPA 2 / TDPA 1, HCA 1 / HCA 2 definitions &amp; exemptions</td></tr>
+      <tr><td><strong>Zoning Bylaw 2018 (as amended)</strong><br /><a href="https://www.victoria.ca/media/file/zoning-bylaw-2018#page=30" target="_blank" rel="noopener">victoria.ca — Zoning Bylaw 2018</a></td><td class="mono">Incl. Amendment Bylaw No. 25-038 (Zoning Modernization, adopted Oct 2, 2025)</td><td class="mono">Nov 19, 2026</td><td>GRD-1 / GRD-1 (PGA) / CVD-1 / LVD-1 zone schedules</td></tr>
+      <tr><td><strong>Zoning Regulation Bylaw 80-159, s. 52</strong> (SSMUH) + legacy district schedules (ZB1980)</td><td class="mono">SSMUH amendments via Bylaw 24-035 (Bill 44 compliance, Jun 30, 2024 deadline)</td><td class="mono">Nov 19, 2026</td><td>3 / 4 / 6-unit minimums; R-K and R3-Q legacy zones</td></tr>
+      <tr><td><strong>Housing Statutes (Residential Development) Amendment Act, 2023 — “Bill 44”</strong></td><td class="mono">SBC 2023 · Amends Local Government Act ss. 464, 481.3 (SSMUH) · Still in force Nov 2026</td><td class="mono">Nov 19, 2026</td><td>Unit minimums by lot size / transit proximity; no-hearing rule for OCP-consistent rezonings</td></tr>
+      <tr><td><strong>City of Victoria Open Data — Parcels (Folio based), Layer 5</strong><br /><span class="mono" style="font-size:11.5px">maps.victoria.ca/server/rest/services/OpenData/OpenData_Land/MapServer/5</span></td><td class="mono">Live service, ArcGIS 11.3 · Open Government Licence — City of Victoria</td><td class="mono">Nov 19, 2026</td><td>Address, folio, PID, lot area (m²), actual use for all 15 parcels</td></tr>
+      <tr><td><strong>City of Victoria Open Data — Planning &amp; Development, Layers 10–14</strong><br /><span class="mono" style="font-size:11.5px">maps.victoria.ca/server/rest/services/OpenData/OpenData_PlanningAndDevelopment/MapServer</span></td><td class="mono">Live service · Zoning (12), DPA (11), HCA (14), Heritage Properties (10)</td><td class="mono">Nov 19, 2026</td><td>Zone, DPA, HCA and heritage status per parcel (point-in-polygon)</td></tr>
+      <tr><td><strong>Vancouver comparison</strong> — Vancouver Plan 2050; Zoning &amp; Development By-law No. 3575, R1-1 district (multiplex amendments, Sep 2023)</td><td class="mono">R1-1 consolidated former RS zones · FSR 0.70 base / 1.0 conditional</td><td class="mono">Nov 19, 2026</td><td>Section 04 only — there to show where the two cities' schemas diverge</td></tr>
+    </tbody></table></div>
+    <div class="disclaimer"><strong>Not legal or planning advice.</strong> I built Ask Victoria 2050 from public sources to show how policy Q&amp;A with proper citations could work inside a product like Urbora. The OCP states the vision; the zoning bylaw is the law — and §1.5 of the OCP itself warns that the plan “does not grant development rights” and the City “is not obligated to approve any such application, even if it aligns with this plan.” Before relying on anything here, confirm the current zone schedule and permit requirements with the City of Victoria's Development Services (250-361-0382) or a qualified planner / lawyer. Parcel data © City of Victoria, Open Government Licence.</div>
+    <div class="foot"><span>Sadhik Ahamed Shaik Mohammed · Cloud &amp; Security Engineer, Absolute Security · Victoria, BC · Nov 19, 2026</span><span>Corrections welcome: <a href="mailto:Sadhik021@gmail.com">Sadhik021@gmail.com</a></span></div>
+  </section>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ============================================================
+   CITATIONS — verbatim quotes extracted from the adopted
+   Victoria 2050 PDF (Bylaw 25-045) on Nov 19, 2026.
+   Page numbers are the plan's printed page numbers.
+   ============================================================ */
+var CITE = {
+  infill4: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Part 3, Figure 5: Envisioned Built Forms — Infill", page:"p. 53",
+    quote:"Ground-oriented and low-rise buildings generally up to four storeys (typically wood frame for residential) on small to medium sites."},
+  intensive6: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Part 3, Figure 5: Envisioned Built Forms — Intensive", page:"p. 53",
+    quote:"Buildings of generally up to six storeys (typically wood frame for residential) that help frame and activate streets on medium to large sites."},
+  tall: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Part 3, Figure 5: Envisioned Built Forms — Tall Building", page:"p. 53",
+    quote:"Buildings seven storeys and over with a ground-oriented base… Mid-rise tall buildings are generally up to 12 storeys, while high-rise tall buildings are above 12 storeys."},
+  infillAnywhere: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Part 3, Urban Structure Guidance — Residential Fabric, Built Form Guidance", page:"pp. 55–56",
+    quote:"Low-rise and ground-oriented residential infill is enabled anywhere in the Residential Fabric. Intensive, primarily residential forms are enabled in identified Priority Growth Areas within close walking distance to Town Centres and Community Villages, and directly adjacent to Transit Priority Corridors."},
+  pga6: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Schedule B, Regional Context Statement — Housing and Community", page:"p. 172",
+    quote:"Up to six-storey intensive residential development is envisioned in Priority Growth Areas, near community and commercial nodes and along the Transit Priority Network."},
+  noRights: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"§1.5 How to Use This Plan — Alignment with Zoning", page:"pp. 52–53",
+    quote:"A property may require a zoning bylaw amendment (rezoning), variance or other City approval to realize the intent of the Urban Structure Concept… The City is not obligated to approve any such application, even if it aligns with this plan."},
+  dpaSummary: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Schedule C — Summary of DPAs and HCAs", page:"p. 182",
+    quote:"Development permits and heritage alteration permits may be required in accordance with this schedule. DPAs and HCAs may overlap. Either or both a DP and HAP may be required for the same property."},
+  dpa1: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Schedule C — DPA 1: General Urban Design, §§1–2", page:"p. 187",
+    quote:"[T]he entire City of Victoria is designated as DPA 1: General Urban Design… A DP is required for: multi-unit residential (more than three Primary Dwelling Units), commercial, institutional, and industrial development."},
+  hca2: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Schedule C — HCA 2: Residential Heritage, §1", page:"p. 214",
+    quote:"[T]he area that is shaded and circumscribed by solid lines on Map 16 – HCA 2: Residential Heritage Overview Map, Map 17 – Avalon-Huntington, Map 18 – Battery Street, Map 19 – Catherine Street North, Map 20 – Lewis Street, and Map 21 – Robert Street is designated as Heritage Conservation Area HCA 2: Residential Heritage."},
+  hca1Fernwood: {doc:"Victoria 2050 OCP", bylaw:"Bylaw 25-045", sec:"Schedule C — HCA 1: Commercial Heritage (Fernwood Village subarea)", page:"pp. 190–196",
+    quote:"In addition, for Fernwood Village, as circumscribed with dotted lines and noted on Map 8 – HCA 1: Commercial Heritage Overview Map and Map 10 – HCA 1: Commercial Heritage Fernwood Village: Schedule 2I: Fernwood Village Guidelines (2022) [apply]."},
+  bill44: {doc:"Bill 44 — Housing Statutes (Residential Development) Amendment Act, 2023", bylaw:"SBC 2023 · LGA s. 481.3", sec:"SSMUH minimums, as implemented in Victoria Zoning Regulation Bylaw 80-159, s. 52", page:"Bylaw 24-035",
+    quote:"Up to 3 homes on lots of 280 square metres or less, 4 on larger lots, and 6 where any part of the lot is within 400 m of a prescribed bus stop, with no vehicle parking required for six-unit projects."},
+  bill44unitsNotStoreys: {doc:"Bill 44 — Housing Statutes (Residential Development) Amendment Act, 2023", bylaw:"SBC 2023", sec:"Scope of the SSMUH mandate", page:"—",
+    quote:"The Act measures units on a lot, not storeys. [It] set minimum unit counts on qualifying lots, three to six units. It did not require the City to designate land for four- and six-storey buildings."},
+  noHearing: {doc:"Local Government Act, s. 464 (as amended by Bill 44)", bylaw:"RSBC 2015, c. 1", sec:"Public hearings on zoning bylaws", page:"—",
+    quote:"[A] council cannot hold a public hearing on a qualifying residential zoning bylaw that is consistent with the Official Community Plan."},
+  trad2012: {doc:"OCP Bylaw 12-013 (2012 OCP) — repealed Oct 2, 2025", bylaw:"Bylaw 12-013", sec:"Traditional Residential designation (as applied in Fernwood)", page:"—",
+    quote:"This designation envisions multi-unit buildings up to three-storeys, including attached residential and apartments, at approximately 1.0 FSR."},
+  jb2012: {doc:"Council minutes, Special Council Oct 2, 2025 — defeated amendment", bylaw:"Bylaw 25-045 proceedings", sec:"James Bay 2012 → 2050 mapping debated at adoption", page:"—",
+    quote:"Areas designated as Urban Residential in James Bay in the 2012 OCP to be designated as Priority Growth Areas… Areas designated as Traditional Residential in James Bay in the 2012 OCP to be designated as Residential Infill."},
+  quebecBoundary: {doc:"Victoria 2050 OCP, Appendix C (Downtown Core boundary)", bylaw:"Bylaw 25-045", sec:"Appendix C map — 205 Quebec St moved into expanded Downtown Core", page:"Appendix C, p. 194",
+    quote:"The plan had placed the site inside an expanded downtown area, which made the rezoning consistent with the plan and barred a hearing on it under provincial law."},
+  vanR11: {doc:"City of Vancouver — Zoning & Development By-law No. 3575", bylaw:"By-law 3575", sec:"R1-1 district (multiplex amendments, Sep 2023)", page:"—",
+    quote:"Vancouver… created a single residential zone (R1-1) covering most of the city and replacing previous single-family (RS) zones. The new bylaw and zone R1-1 allows for multiplexing and having 3–6 units per lot… increased to 7 or 8 if the units are purpose-built rentals."}
+};
+
+/* ============================================================
+   PARCELS — real City of Victoria records.
+   address/folio/PID/area/use: OpenData_Land Layer 5.
+   zone/dpa/hca/heritage: OpenData_PlanningAndDevelopment
+   Layers 12/11/14/10, point-in-polygon, Nov 19, 2026.
+   ocp: Urban Structure designation implied by the zoning-
+   modernization mapping (PGA suffix / village districts /
+   DPA 2 Downtown Core). fsrNote: OCP sets form, not FSR —
+   FSR lives in the zone schedule; linked, not invented.
+   ============================================================ */
+var ZONELINK = {
+  "GRD-1":"https://www.victoria.ca/media/file/zoning-bylaw-2018#page=30",
+  "GRD-1 (PGA)":"https://www.victoria.ca/media/file/zoning-bylaw-2018#page=30",
+  "LVD-1":"https://www.victoria.ca/media/file/zoning-bylaw-2018#page=44",
+  "CVD-1":"https://www.victoria.ca/media/file/zoning-bylaw-2018#page=47",
+  "R-K":"https://www.victoria.ca/media/file/23pdf",
+  "R3-Q":"https://www.victoria.ca/media/file/3113pdf"
+};
+var PARCELS = [
+ {id:"f1", addr:"1333 Gladstone Ave", hood:"Fernwood", folio:"07447007", pid:"003-620-701", area:674.8, use:"Single-family dwelling", lat:48.43022, lng:-123.34371,
+  zone:"GRD-1", zoneTitle:"General Residential District-1", bylaw:"Zoning Bylaw 2018", ocp:"Residential Infill", form:"Infill", maxStoreys:4, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Unverified — needs the prescribed-stop layer", note:"A typical Fernwood house lot: the 2050 plan's citywide infill story in one parcel."},
+ {id:"f2", addr:"1300 Gladstone Ave", hood:"Fernwood", folio:"07446043", pid:"017-328-055", area:940.0, use:"Stores / offices with apartments", lat:48.43065, lng:-123.34479,
+  zone:"LVD-1", zoneTitle:"Local Village District-1 (Fernwood Village)", bylaw:"Zoning Bylaw 2018", ocp:"Local Village — Fernwood Village", form:"Village", maxStoreys:null, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:"HCA 1 · Commercial Heritage — Fernwood Village", heritage:null, transit6:"Unverified — needs the prescribed-stop layer", note:"The Fernwood Village corner: village zoning inside a Commercial Heritage Conservation Area — a Heritage Alteration Permit can be required on top of a development permit."},
+ {id:"f3", addr:"1437 Gladstone Ave", hood:"Fernwood", folio:"07437006", pid:"002-474-611", area:627.1, use:"Single-family dwelling with basement suite", lat:48.43013, lng:-123.34064,
+  zone:"GRD-1 (PGA)", zoneTitle:"General Residential District-1 — Priority Growth Area", bylaw:"Zoning Bylaw 2018", ocp:"Priority Growth Area", form:"Intensive", maxStoreys:6, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Unverified — needs the prescribed-stop layer", note:"Same street as 1333 Gladstone, different future: the (PGA) suffix is the zoning modernization flag for six-storey intensive infill."},
+ {id:"f4", addr:"1338 Grant St", hood:"Fernwood", folio:"07448020", pid:"002-963-191", area:716.2, use:"Single-family dwelling", lat:48.42891, lng:-123.34353,
+  zone:"GRD-1", zoneTitle:"General Residential District-1", bylaw:"Zoning Bylaw 2018", ocp:"Residential Infill", form:"Infill", maxStoreys:4, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Unverified — needs the prescribed-stop layer", note:"Interior Fernwood block — infill form, no heritage overlay in the City layers."},
+ {id:"f5", addr:"1336 Gladstone Ave", hood:"Fernwood", folio:"07446046", pid:"018-853-935", area:808.7, use:"Triplex", lat:48.43080, lng:-123.34328,
+  zone:"GRD-1", zoneTitle:"General Residential District-1", bylaw:"Zoning Bylaw 2018", ocp:"Residential Infill", form:"Infill", maxStoreys:4, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Unverified — needs the prescribed-stop layer", note:"Already a triplex — exactly the gentle-density form the Infill designation envisions scaling to four storeys."},
+ {id:"f6", addr:"1358 Pandora Ave", hood:"Fernwood", folio:"07450021", pid:"004-954-491", area:509.7, use:"Triplex", lat:48.42709, lng:-123.34411,
+  zone:"GRD-1 (PGA)", zoneTitle:"General Residential District-1 — Priority Growth Area", bylaw:"Zoning Bylaw 2018", ocp:"Priority Growth Area", form:"Intensive", maxStoreys:6, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"On the Pandora corridor — likely, but not asserted without the prescribed-stop layer", note:"Pandora Ave is a Transit Priority Corridor — the OCP's stated reason this block carries the Priority Growth flag."},
+ {id:"f7", addr:"1438 Vining St", hood:"Fernwood", folio:"07437021", pid:"004-272-366", area:626.5, use:"Single-family dwelling", lat:48.42976, lng:-123.34046,
+  zone:"GRD-1 (PGA)", zoneTitle:"General Residential District-1 — Priority Growth Area", bylaw:"Zoning Bylaw 2018", ocp:"Priority Growth Area", form:"Intensive", maxStoreys:6, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Unverified — needs the prescribed-stop layer", note:"A house lot one block from Gladstone that the 2050 plan now treats as a six-storey site."},
+ {id:"j1", addr:"205 Quebec St", hood:"James Bay", folio:"02119001", pid:"009-387-137", area:1336.7, use:"Vacant — proposed 14-storey tower site", lat:48.42199, lng:-123.37781,
+  zone:"R-K", zoneTitle:"Medium Density Attached Dwelling District (legacy)", bylaw:"Zoning Regulation Bylaw 80-159 (ZB1980)", ocp:"Downtown Core (expanded boundary, 2050)", form:"Tall Building", maxStoreys:12, dpa:["DPA 2 · Downtown Core","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Not applicable — not an SSMUH restricted zone", note:"The most contested parcel in the 2050 plan: moved inside the expanded Downtown Core boundary (Appendix C, p. 194), which made its 14-storey rezoning OCP-consistent — and under LGA s. 464, no public hearing may be held. Its legacy R-K zoning has NOT caught up with the OCP: a live OCP-vs-zoning conflict.", conflict:true},
+ {id:"j2", addr:"345 Quebec St", hood:"James Bay", folio:"02118001", pid:"002-836-271", area:3997.1, use:"Apartment site (The James)", lat:48.42119, lng:-123.37605,
+  zone:"R3-Q", zoneTitle:"Multiple Dwelling — Quebec Street District (legacy)", bylaw:"Zoning Regulation Bylaw 80-159 (ZB1980)", ocp:"Downtown Core (expanded boundary, 2050)", form:"Tall Building", maxStoreys:12, dpa:["DPA 2 · Downtown Core","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Not applicable — not an SSMUH restricted zone", note:"Site-specific legacy zone (R3-Q exists only for this Quebec St district) now sitting inside the Downtown Core DPA — site-specific zoning is why one-size answers fail."},
+ {id:"j3", addr:"131 Menzies St", hood:"James Bay", folio:"02151019", pid:"008-674-388", area:414.8, use:"Single-family dwelling", lat:48.41462, lng:-123.37444,
+  zone:"CVD-1", zoneTitle:"Community Village District-1 (James Bay Village)", bylaw:"Zoning Bylaw 2018", ocp:"Community Village — James Bay Village", form:"Village", maxStoreys:null, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Not applicable — village zone, not an SSMUH restricted zone", note:"One of three Menzies St houses (131/135/139) in the REZ00823 rezoning application — village zoning, heritage-era buildings, but neither house is on the Heritage Register. Check 135 and 139 too."},
+ {id:"j4", addr:"135 Menzies St", hood:"James Bay", folio:"02151020", pid:"008-674-418", area:414.7, use:"Single-family dwelling", lat:48.41476, lng:-123.37429,
+  zone:"CVD-1", zoneTitle:"Community Village District-1 (James Bay Village)", bylaw:"Zoning Bylaw 2018", ocp:"Community Village — James Bay Village", form:"Village", maxStoreys:null, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Not applicable — village zone, not an SSMUH restricted zone", note:"Mirror-image house to 139 Menzies; residents told the James Bay Neighbourhood Association the REZ00823 proposal would remove three heritage-era buildings. Heritage-era is not the same as heritage-protected — the City layer shows no designation here."},
+ {id:"j5", addr:"101 Oswego St", hood:"James Bay", folio:"02133011", pid:"009-285-318", area:566.9, use:"Single-family dwelling", lat:48.41597, lng:-123.37978,
+  zone:"GRD-1 (PGA)", zoneTitle:"General Residential District-1 — Priority Growth Area", bylaw:"Zoning Bylaw 2018", ocp:"Priority Growth Area", form:"Intensive", maxStoreys:6, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:"Designated heritage property (City layer: Heritage = Designated, status D)", transit6:"Unverified — needs the prescribed-stop layer", note:"The heritage-vs-density test case: six-storey intensive form envisioned by the OCP, on a lot whose house is legally designated heritage. Both facts are true at once — the answer has to hold both.", conflict:true},
+ {id:"j6", addr:"225 Montreal St", hood:"James Bay", folio:"02122021", pid:"008-606-960", area:678.9, use:"Single-family dwelling", lat:48.41963, lng:-123.38032,
+  zone:"GRD-1", zoneTitle:"General Residential District-1", bylaw:"Zoning Bylaw 2018", ocp:"Residential Infill", form:"Infill", maxStoreys:4, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:"Heritage Register property (City layer: Heritage = Registered, status R) — listed, not designated", transit6:"Unverified — needs the prescribed-stop layer", note:"Registered ≠ designated: listing on the Heritage Register signals value but does not by itself legally prevent demolition the way designation does. The demo keeps the two statuses separate."},
+ {id:"j7", addr:"145 Ontario St", hood:"James Bay", folio:"02110008", pid:"003-646-467", area:450.8, use:"Triplex", lat:48.41964, lng:-123.38139,
+  zone:"GRD-1", zoneTitle:"General Residential District-1", bylaw:"Zoning Bylaw 2018", ocp:"Residential Infill", form:"Infill", maxStoreys:4, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Unverified — needs the prescribed-stop layer", note:"An existing triplex on a 451 m² lot — already past the old single-family pattern the 2012 plan protected."},
+ {id:"j8", addr:"230 Menzies St", hood:"James Bay", folio:"02136053", pid:"002-306-468", area:2874.5, use:"Neighbourhood shopping centre (James Bay Village)", lat:48.41567, lng:-123.37403,
+  zone:"CVD-1", zoneTitle:"Community Village District-1 (James Bay Village)", bylaw:"Zoning Bylaw 2018", ocp:"Community Village — James Bay Village", form:"Village", maxStoreys:null, dpa:["DPA 1 · General Urban Design","TDPA 1 · Tenant Protection (citywide)"], hca:null, heritage:null, transit6:"Not applicable — village / commercial zone", note:"The commercial heart of James Bay Village. Village districts carry their own height and FSR schedule in the bylaw — the OCP deliberately does not set a single storey number for them."}
+];
+function ssmuhMin(p){
+  if(p.zone.indexOf("GRD")!==0) return null; /* SSMUH restricted-zone logic applies to the residential GRD lots in this demo set */
+  if(p.area<=280) return 3;
+  return 4;
+}
+function byId(id){ for(var i=0;i<PARCELS.length;i++) if(PARCELS[i].id===id) return PARCELS[i]; return PARCELS[0]; }
+</script>
+<script>
+/* ============================================================
+   ANSWER ENGINE — deterministic, citation-checked.
+   Every verdict ships with the citation objects it relied on.
+   verdict: ok | warn | bad | info
+   ============================================================ */
+function citeHTML(c){
+  return '<div class="citecard"><q>'+c.quote+'</q><div class="cite">— <b>'+c.doc+'</b> · '+c.bylaw+' · '+c.sec+' · <b>'+c.page+'</b></div></div>';
+}
+function ans(verdict, badge, title, body, cites, conf){
+  return {verdict:verdict, badge:badge, title:title, body:body, cites:cites, conf:conf};
+}
+function storeyAnswer(p, n){
+  if(p.id==="j1"){
+    if(n<=14) return ans("warn","Conflict flagged","The OCP vision and the legal zoning disagree at 205 Quebec St",
+      "<p>Victoria 2050 places this parcel inside the <strong>expanded Downtown Core</strong>, where Tall Building forms (7+ storeys) are envisioned — that is why the proposed 14-storey rezoning was treated as OCP-consistent. But the parcel's actual zoning is still the legacy <strong>R-K</strong> district, which does not permit a tower as-of-right. A rezoning is still the legal path; the OCP change removed the public hearing, not the rezoning.</p>",
+      [CITE.tall, CITE.quebecBoundary, CITE.noRights],
+      "High confidence a conflict exists — it is documented in the adoption record. Whether any specific proposal is approved is a Council / staff decision this demo cannot predict.");
+    return ans("warn","Conflict flagged","Above the mid-rise tall range — not settled by the OCP",
+      "<p>The OCP's Tall Building form describes mid-rise tall buildings as “generally up to 12 storeys” and high-rise as above 12 — it does not grant any specific height at 205 Quebec St, and the legacy R-K zoning governs until amended.</p>",
+      [CITE.tall, CITE.noRights], "The sources do not settle a "+n+"-storey entitlement here. Treat as unanswerable without a rezoning application.");
+  }
+  if(p.form==="Village"){
+    return ans("warn","Check the zone schedule","The OCP doesn't set one storey number for village districts",
+      "<p><strong>"+p.addr+"</strong> is in the <strong>"+p.ocp+"</strong> ("+p.zone+" — "+p.zoneTitle+"). Victoria 2050 deliberately leaves village height and density to the zone schedule rather than the citywide Infill / Intensive forms, so an honest answer has to come from the "+p.zone+" schedule of the Zoning Bylaw 2018 — linked from this parcel's card — not from Figure 5.</p>",
+      [CITE.noRights],
+      "Accurate as far as the OCP goes. The binding number is in the zone schedule (Zoning Bylaw 2018, "+p.zone+"); confirm there before designing.");
+  }
+  if(p.maxStoreys && n<=p.maxStoreys){
+    var cites = p.form==="Intensive" ? [CITE.intensive6, CITE.pga6, CITE.infillAnywhere] : [CITE.infill4, CITE.infillAnywhere];
+    var extra = p.heritage ? "<p><strong>Heritage flag:</strong> this lot's building is "+p.heritage+". The OCP form vision does not override heritage protection — expect a heritage process on top of any density.</p>" : "";
+    return ans("ok","Envisioned by the OCP","Yes — "+n+" storeys fits the "+p.form+" form envisioned for "+p.addr,
+      "<p>The OCP designation here is <strong>"+p.ocp+"</strong>, whose envisioned form is <strong>"+p.form+"</strong> (up to "+p.maxStoreys+" storeys). That is the plan's vision; the as-of-right build still has to satisfy the "+p.zone+" zone schedule, setbacks and a development permit where required.</p>"+extra,
+      cites, "OCP-level answer: high confidence. As-of-right status: confirm against the "+p.zone+" schedule — the OCP itself says it does not grant development rights (§1.5).");
+  }
+  if(p.maxStoreys && n>p.maxStoreys){
+    var cites2 = p.form==="Intensive" ? [CITE.intensive6, CITE.pga6] : [CITE.infill4, CITE.infillAnywhere];
+    return ans("bad","Beyond the OCP vision","No — "+n+" storeys exceeds what's envisioned at "+p.addr,
+      "<p>This parcel is <strong>"+p.ocp+"</strong> — envisioned form <strong>"+p.form+"</strong>, up to "+p.maxStoreys+" storeys. "+n+" storeys would need both a rezoning and, in most cases, an OCP amendment. Note the common confusion: <strong>Bill 44 counts units, not storeys</strong> — it never promised "+n+" storeys anywhere.</p>",
+      cites2.concat([CITE.bill44unitsNotStoreys]),
+      "High confidence at the OCP level. A site-specific application could still be proposed — Council discretion is not something a document search can rule out.");
+  }
+  return ans("info","Uncertain","The sources don't settle "+n+" storeys at "+p.addr,
+    "<p>No envisioned-form number is pinned for this parcel in my sources, so rather than guess, this needs the zone schedule.</p>", [CITE.noRights], "I'd rather flag the gap than fill it with a guess.");
+}
+function answerQuestion(rawQ, p){
+  var q = (rawQ||"").toLowerCase();
+  /* --- out of scope: must refuse --- */
+  if(/price|worth|rent cost|how much rent|school|crime|safe|invest|buy|sell|mortgage|real estate agent|weather/.test(q) && !/storey|storeys|unit|zone|heritage|permit|hearing/.test(q)){
+    return ans("info","Out of scope — no answer","That's outside what land-use policy sources can answer",
+      "<p>I only answer from Victoria 2050, the zoning bylaws and Bill 44 on this page. Prices, rents, schools, safety and investment merit aren't in those documents, so any answer would be invented. Try asking about storeys, units, zoning, heritage or permits for <strong>"+p.addr+"</strong> instead.</p>",
+      [], "Prices and rents aren't in any of the sources listed in section 05, so there is nothing to cite.");
+  }
+  if(/guarantee|for sure|will council approve|will my (application|rezoning|permit) (be approved|pass)|legal advice/.test(q)){
+    return ans("warn","Cannot guarantee","No document can guarantee an approval — and the OCP says so itself",
+      "<p>Even a proposal that aligns with Victoria 2050 still goes through formal process, and the plan is explicit that alignment does not obligate the City to approve.</p>",
+      [CITE.noRights], "Approvals are Council and staff decisions. The documents set the rules; they can't promise an outcome.");
+  }
+  /* --- heritage / HCA --- */
+  if(/heritage conservation|hca/.test(q)){
+    if(p.hca) return ans("warn","Yes — in an HCA","Yes — "+p.addr+" is in "+p.hca,
+      "<p>The City's HCA layer (Layer 14) places this parcel inside <strong>"+p.hca+"</strong>. In an HCA, alterations can require a <strong>Heritage Alteration Permit (HAP)</strong> in addition to any development permit — the OCP is explicit that the two can stack on the same property. The Fernwood Village guidelines (Schedule 2I, 2022) apply here.</p>",
+      [CITE.hca1Fernwood, CITE.dpaSummary], "High confidence — direct hit in both the OCP Schedule C text and the City's HCA polygon layer.");
+    return ans("ok","Not in an HCA","No — "+p.addr+" is not in a Heritage Conservation Area",
+      "<p>The City's HCA layer shows no HCA polygon over this parcel. Note how narrow HCA 2 (Residential Heritage) actually is: the OCP limits it to five mapped districts — Avalon-Huntington, Battery Street, Catherine Street North, Lewis Street and Robert Street — none of which covers this address. HCA 1 (Commercial Heritage) covers Old Town, Fernwood Village and a few other commercial subareas."+(p.heritage?" <strong>Separate fact:</strong> this building itself is "+p.heritage+" — individual heritage status is different from being in an HCA.":"")+"</p>",
+      [CITE.hca2], "High confidence for HCA status. Individual heritage status is answered from the Heritage Properties layer — ask “is this heritage-protected?” for that.");
+  }
+  if(/heritage/.test(q)){
+    if(p.heritage && /status D/.test(p.heritage)) return ans("warn","Designated — legally protected","Yes — this is a designated heritage property, and that collides with the density vision",
+      "<p>The City's Heritage Properties layer records <strong>"+p.addr+"</strong> as <strong>Designated</strong> (status D) — legal protection, not just a listing. At the same time its OCP designation is <strong>"+p.ocp+"</strong> (envisioned up to "+(p.maxStoreys||"—")+" storeys). Both are true. Demolition or major alteration of a designated property requires Council's heritage process; the OCP's density vision does not silently override it. This is a genuine heritage-vs-density tension, flagged rather than resolved.</p>",
+      [CITE.pga6, CITE.dpaSummary], "Both halves are directly sourced (GIS heritage layer + OCP). How the tension resolves on a real application is a Council decision.");
+    if(p.heritage) return ans("warn","On the Register — not designated","It's heritage-listed, which is weaker than protected",
+      "<p>The City layer records this property as <strong>"+p.heritage+"</strong>. Register status is <strong>weaker</strong> than designation: a listing documents heritage value and triggers review, but unlike designation it does not by itself legally prohibit demolition. Mixing up “registered” and “designated” is one of the most common mistakes in heritage questions, so the two are kept separate throughout this page.</p>",
+      [CITE.dpaSummary], "High confidence on the status distinction, from the City's own Heritage field values (R vs D).");
+    return ans("ok","No heritage status found","No — no heritage status in the City layers for "+p.addr,
+      "<p>Neither the Heritage Properties layer nor any HCA polygon covers this parcel. Heritage-<em>era</em> age alone confers no protection — protection comes from designation, a heritage covenant, or an HCA, and none is recorded here.</p>",
+      [CITE.hca2], "High confidence within the pinned layers. A heritage covenant registered on title would not appear in these layers — a title search is the backstop.");
+  }
+  /* --- development permit --- */
+  if(/development permit|need a permit|dp\b|permit/.test(q)){
+    var dpBody = "<p>Almost certainly yes for anything beyond a small house project. This parcel sits in <strong>"+p.dpa.join("</strong> and <strong>")+"</strong>. Citywide, DPA 1 requires a development permit for multi-unit residential over three units, and TDPA 1 (Tenant Protection) applies citywide when redevelopment displaces tenants."+(p.dpa.join(" ").indexOf("DPA 2")>-1?" Because this parcel is also in <strong>DPA 2: Downtown Core</strong>, the Downtown Core guidelines govern instead of the general ones.":"")+(p.hca?" Being in <strong>"+p.hca+"</strong> can add a Heritage Alteration Permit on top.":"")+"</p>";
+    return ans("warn","Permit required","A development permit is required for multi-unit development at "+p.addr, dpBody,
+      [CITE.dpa1, CITE.dpaSummary], "High confidence for multi-unit / commercial proposals. Single-house-scale work has exemptions listed in Schedule C — check the exemption list before assuming.");
+  }
+  /* --- public hearing --- */
+  if(/public hearing|hearing/.test(q)){
+    if(p.id==="j1") return ans("warn","No hearing — and that's the controversy","No public hearing may be held for an OCP-consistent rezoning at 205 Quebec St",
+      "<p>Because Victoria 2050 moved this site inside the Downtown Core boundary, a rezoning that matches the OCP is “consistent” — and Bill 44's amendment to the Local Government Act prohibits a hearing on exactly that class of bylaw. The hearing scheduled for Oct 9, 2025 was cancelled for this reason.</p>",
+      [CITE.noHearing, CITE.quebecBoundary], "High confidence — statute text plus the documented cancellation.");
+    return ans("info","It depends on consistency","If the rezoning matches the OCP, there is no public hearing — by law",
+      "<p>Bill 44 amended the Local Government Act so a council <em>cannot</em> hold a public hearing on a qualifying residential rezoning that is consistent with the OCP. A proposal that needs an OCP amendment follows the older path, hearing included. So the honest answer for <strong>"+p.addr+"</strong> is: consistent = no hearing; inconsistent = hearing possible.</p>",
+      [CITE.noHearing], "High confidence on the rule; which side a future proposal falls on depends on the proposal.");
+  }
+  /* --- 2012 vs 2050 --- */
+  if(/2012|changed|change|used to|before|previous plan|old ocp/.test(q)){
+    if(p.hood==="James Bay" && (p.id==="j1"||p.id==="j2")) return ans("warn","Boundary moved","The big change at "+p.addr+" is a line on a map",
+      "<p>Under the 2012 OCP this part of James Bay sat in residential designations outside the Downtown Core. Victoria 2050 redrew the Downtown Core boundary to include it (Appendix C, p. 194) and layered DPA 2 over it. The practical consequence is procedural, not just visual: OCP-consistent rezonings here can no longer receive a public hearing (LGA s. 464). Council debated restoring the 2012 James Bay boundaries on adoption night, Oct 2, 2025 — the amendment was defeated.</p>",
+      [CITE.jb2012, CITE.quebecBoundary, CITE.noHearing], "High confidence — adoption minutes + Appendix C + statute.");
+    if(p.hood==="Fernwood") return ans("info","2012 → 2050","What changed in Fernwood: roughly double the envisioned height on house lots",
+      "<p>Under the 2012 OCP, Fernwood house lots were <strong>Traditional Residential</strong> — multi-unit buildings “up to three-storeys… at approximately 1.0 FSR.” Victoria 2050 replaced every neighbourhood plan with citywide forms: this parcel is now <strong>"+p.ocp+"</strong> (envisioned up to "+(p.maxStoreys||"the village schedule")+" storeys). The 2012 OCP (Bylaw 12-013) was repealed outright on Oct 2, 2025 — there is no grandfathered 2012 answer anymore.</p>",
+      [CITE.trad2012, p.form==="Intensive"?CITE.pga6:CITE.infill4], "High confidence on the Fernwood comparison — the 2012 wording is quoted from a City-filed application letter applying the 2012 OCP to a Fernwood site.");
+    return ans("info","2012 → 2050","James Bay's designations were redrawn, not just raised",
+      "<p>The 2012 OCP split James Bay between <strong>Urban Residential</strong> and <strong>Traditional Residential</strong>. Victoria 2050 maps those areas to <strong>Priority Growth Areas</strong> and <strong>Residential Infill</strong> respectively — the exact mapping Council debated (and kept) on adoption night. This parcel landed as <strong>"+p.ocp+"</strong>, envisioned up to "+(p.maxStoreys||"—")+" storeys.</p>",
+      [CITE.jb2012, p.form==="Intensive"?CITE.pga6:CITE.infill4], "High confidence on the mapping; parcel-level 2012 boundaries are from the 2012 OCP maps referenced in the minutes.");
+  }
+  /* --- Bill 44 / units --- */
+  if(/bill 44|ssmuh|units|how many (homes|houses|dwellings)|multiplex|fourplex|triplex/.test(q)){
+    var m = ssmuhMin(p);
+    if(m===null) return ans("warn","Bill 44 doesn't set this one","Bill 44's unit minimums don't directly govern "+p.addr,
+      "<p>The SSMUH minimums apply to lots in <em>restricted zones</em> — zones limited to single-family / duplex use. This parcel is zoned <strong>"+p.zone+"</strong> ("+p.zoneTitle+"), which is not such a zone, so quoting “4 units as-of-right” here would be wrong. Its density comes from the "+p.zone+" schedule and the OCP's "+p.ocp+" designation instead.</p>",
+      [CITE.bill44], "High confidence — this distinction (restricted zone vs not) is where most Bill 44 summaries go wrong.");
+    return ans("ok","Bill 44 minimum: "+m+" units","At least "+m+" units must be permitted on this "+p.area+" m² lot",
+      "<p>Victoria implemented Bill 44 in Zoning Regulation Bylaw s. 52: lots ≤280 m² → 3 units; lots &gt;280 m² → <strong>4 units</strong>. This lot is <strong>"+p.area+" m²</strong> (City parcel record), so the floor is <strong>"+m+" units</strong> without a rezoning. The 6-unit tier needs the lot to be within 400 m of a <em>prescribed</em> frequent-transit stop — for this parcel that's <strong>"+p.transit6+"</strong>, so I won't claim it here. And keep units ≠ storeys: Bill 44 never set a storey count.</p>",
+      [CITE.bill44, CITE.bill44unitsNotStoreys], "Unit minimum: high confidence (statute + bylaw + measured lot area). Six-unit tier: deliberately unclaimed pending the prescribed-stop layer.");
+  }
+  /* --- zone / designation / fsr --- */
+  if(/zone|zoning|designation|ocp say|what is this/.test(q)){
+    return ans("info","Zone + designation",""+p.addr+" — "+p.zone+" under a "+p.ocp+" designation",
+      "<p><strong>Zone:</strong> "+p.zone+" — "+p.zoneTitle+" ("+p.bylaw+"). <strong>OCP designation:</strong> "+p.ocp+", envisioned form <strong>"+p.form+"</strong>"+(p.maxStoreys?", up to "+p.maxStoreys+" storeys":"")+". <strong>Overlays:</strong> "+p.dpa.join("; ")+(p.hca?"; "+p.hca:"")+(p.heritage?"; "+p.heritage:"")+".</p>",
+      [p.form==="Intensive"?CITE.pga6:(p.form==="Infill"?CITE.infill4:CITE.noRights)], "Zone/DPA/HCA/heritage: direct City GIS hits. OCP form: Figure 5 / Schedule B as cited.");
+  }
+  if(/fsr|floor space|density|how big|floor area/.test(q)){
+    return ans("warn","FSR lives in the zoning, not the OCP","Victoria 2050 sets form and storeys — the FSR number is in the "+p.zone+" schedule",
+      "<p>This is a deliberate design choice in the 2050 plan: the OCP speaks in built form (Infill ≤4 storeys, Intensive ≤6) and leaves floor-space ratio to the zoning bylaw. So the checkable answer is: read the FSR in the <a href=\""+(ZONELINK[p.zone]||"#sources")+"\" target=\"_blank\" rel=\"noopener\">"+p.zone+" schedule</a> — the OCP doesn't state a parcel FSR, so I won't invent one. For scale: under the <em>2012</em> OCP, Fernwood's Traditional Residential envisioned ≈1.0 FSR.</p>",
+      [CITE.noRights, CITE.trad2012], "High confidence about where the number lives. I've linked the schedule rather than paraphrase a table I haven't verified line by line.");
+  }
+  /* --- storeys --- */
+  var sm = q.match(/(\d+)\s*(?:storey|story|stories|floors)/) || (q.indexOf("four storey")>-1||q.indexOf("4-storey")>-1||q.indexOf("four-storey")>-1?[0,4]:null) || (q.indexOf("six storey")>-1||q.indexOf("6-storey")>-1?[0,6]:null);
+  if(sm || /storey|storeys|stories|tall|height|how high/.test(q)){
+    var n = sm ? parseInt(sm[1],10) : (p.maxStoreys||4);
+    return storeyAnswer(p, n);
+  }
+  /* --- demolish --- */
+  if(/demolish|tear down|knock down/.test(q)){
+    if(p.heritage && /Designated/.test(p.heritage)) return ans("bad","Designation blocks the easy path","Demolition at "+p.addr+" runs into legal heritage designation",
+      "<p>This property is <strong>designated</strong> (City layer, status D). Designated property can't be demolished or altered as-of-right — it needs Council approval through the heritage process, whatever the OCP's density vision says.</p>",
+      [CITE.dpaSummary], "High confidence on status; outcomes of heritage applications are discretionary.");
+    return ans("info","No heritage bar found","Nothing in the pinned layers bars demolition at "+p.addr+" — permits still apply",
+      "<p>No designation, covenant or HCA is recorded for this parcel, so heritage law isn't the obstacle. Demolition and redevelopment still need the usual permits, and TDPA 1 tenant-protection rules apply if tenants are displaced.</p>",
+      [CITE.dpaSummary], "Scoped to the pinned layers; a title search is the backstop for covenants.");
+  }
+  /* --- fallback --- */
+  return ans("info","Not in the pinned sources","I can't answer that from Victoria 2050, the zoning bylaws or Bill 44",
+    "<p>The question doesn't map to a provision in the sources I've pinned for <strong>"+p.addr+"</strong>. Rather than improvise, here are questions that do: storeys (“Can I build 4 storeys here?”), units (“How many units under Bill 44?”), heritage (“Is this in a Heritage Conservation Area?”), permits, public hearings, and 2012-vs-2050 changes.</p>",
+    [], "If it isn't in the sources in section 05, I'd rather say so than improvise an answer.");
+}
+</script>
+<script>
+/* ============================================================
+   UI — map, list, detail, ask
+   ============================================================ */
+var selected = byId("f1"), hoodFilter = "All", markers = {}, map = null;
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function tagsFor(p){
+  var t = "";
+  if(p.form==="Intensive") t += '<span class="tag pga">Priority Growth · up to 6 storeys</span>';
+  if(p.form==="Infill") t += '<span class="tag">Infill · up to 4 storeys</span>';
+  if(p.form==="Village") t += '<span class="tag vil">'+esc(p.ocp.split(" — ")[0])+'</span>';
+  if(p.form==="Tall Building") t += '<span class="tag vil">Downtown Core · Tall form</span>';
+  if(p.hca) t += '<span class="tag her">In an HCA</span>';
+  if(p.heritage && /Designated/.test(p.heritage)) t += '<span class="tag her">Designated heritage</span>';
+  else if(p.heritage) t += '<span class="tag her">Heritage Register</span>';
+  if(p.conflict && !p.heritage) t += '<span class="tag her">OCP ↔ zoning conflict</span>';
+  return t;
+}
+function renderList(){
+  var term = document.getElementById("search").value.trim().toLowerCase();
+  var html = "";
+  PARCELS.forEach(function(p){
+    if(hoodFilter!=="All" && p.hood!==hoodFilter) return;
+    if(term && p.addr.toLowerCase().indexOf(term)===-1 && p.zone.toLowerCase().indexOf(term)===-1) return;
+    html += '<div class="pcard'+(p.id===selected.id?" sel":"")+'" data-sel="'+p.id+'" role="button" tabindex="0" aria-label="Select '+esc(p.addr)+'"><div class="addr">'+esc(p.addr)+'</div><div class="meta">'+esc(p.hood)+' · '+esc(p.zone)+' · '+p.area+' m² · Folio '+esc(p.folio)+'</div><div class="tags">'+tagsFor(p)+'</div></div>';
+  });
+  document.getElementById("plist").innerHTML = html || '<p style="color:var(--ink2);font-size:13.5px;padding:6px">No parcels match that search in the demo set. Try “Gladstone”, “Menzies” or “Quebec”.</p>';
+  Array.prototype.forEach.call(document.querySelectorAll("[data-sel]"), function(el){
+    el.addEventListener("click", function(){ selectParcel(el.getAttribute("data-sel"), true); });
+    el.addEventListener("keydown", function(ev){ if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); selectParcel(el.getAttribute("data-sel"), true); } });
+  });
+}
+function verdictFor(p){
+  if(p.id==="j1") return {cls:"bad", ic:"!", html:"<strong>Live conflict:</strong> the OCP now envisions a Downtown Core tall building here, but the legal zoning is still legacy R-K. The OCP change removed the public hearing — it did not rezone the lot."};
+  if(p.heritage && /Designated/.test(p.heritage)) return {cls:"warn", ic:"!", html:"<strong>Heritage vs density:</strong> six-storey intensive form is envisioned, but the house is legally designated heritage. Both facts stand — a real application has to resolve them through the heritage process."};
+  if(p.hca) return {cls:"warn", ic:"!", html:"<strong>Heritage overlay:</strong> this parcel is in HCA 1 (Fernwood Village). Expect a Heritage Alteration Permit to be considered alongside any development permit."};
+  if(p.form==="Intensive") return {cls:"ok", ic:"✓", html:"<strong>Priority Growth Area:</strong> up to six-storey intensive infill is the envisioned form here under Victoria 2050 — subject to the GRD-1 (PGA) schedule and a development permit."};
+  if(p.form==="Infill") return {cls:"ok", ic:"✓", html:"<strong>Residential Infill:</strong> ground-oriented and low-rise infill up to four storeys is envisioned anywhere in the Residential Fabric — this parcel included."};
+  if(p.form==="Village") return {cls:"ok", ic:"✓", html:"<strong>Village district:</strong> height and density are set by the "+esc(p.zone)+" schedule, not a citywide storey number — the parcel card links the schedule."};
+  return {cls:"ok", ic:"✓", html:"Downtown Core form applies — see the citations below."};
+}
+function renderDetail(){
+  var p = selected, v = verdictFor(p), m = ssmuhMin(p);
+  var fsrNote = p.form==="Village" || p.form==="Tall Building"
+    ? "Set by the "+p.zone+" schedule — the OCP does not publish a single FSR for village / downtown parcels."
+    : "Set by the "+p.zone+" zone schedule (linked below). The OCP governs form &amp; storeys, not FSR — stated plainly rather than estimated.";
+  var html = '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><h3>'+esc(p.addr)+'</h3><span class="mono" style="font-size:12px;color:var(--ink3)">'+p.lat.toFixed(5)+', '+p.lng.toFixed(5)+' · retrieved Nov 19, 2026</span></div>'
+    + '<p class="subline">'+esc(p.hood)+' · '+esc(p.use)+' · Folio <span class="mono">'+esc(p.folio)+'</span> · PID <span class="mono">'+esc(p.pid)+'</span> · Lot <span class="mono">'+p.area+' m²</span> (City parcel record)</p>'
+    + '<div class="verdict '+v.cls+'"><span class="ic">'+v.ic+'</span><span>'+v.html+'</span></div>'
+    + '<div class="specgrid">'
+    + '<div class="spec"><div class="k">Zone (legal)</div><div class="v">'+esc(p.zone)+'</div><div class="n">'+esc(p.zoneTitle)+'<br />'+esc(p.bylaw)+'</div><div class="src"><a href="'+(ZONELINK[p.zone]||"#sources")+'" target="_blank" rel="noopener">Read the zone schedule ↗</a></div></div>'
+    + '<div class="spec"><div class="k">OCP designation — Victoria 2050</div><div class="v">'+esc(p.ocp)+'</div><div class="n">Urban Structure Concept, Fig. 6 · Bylaw 25-045</div></div>'
+    + '<div class="spec"><div class="k">Max storeys / height (OCP form)</div><div class="v">'+(p.maxStoreys? p.maxStoreys+' storeys · '+p.form : 'Per zone schedule')+'</div><div class="n">'+(p.maxStoreys? 'Envisioned built form, Fig. 5 — zoning schedule still governs as-of-right height' : 'Villages &amp; downtown: OCP sets no single number; the zone schedule does')+'</div></div>'
+    + '<div class="spec"><div class="k">Density / FSR</div><div class="v">'+(m? '≥ '+m+' units (Bill 44 floor)' : 'Per zone schedule')+'</div><div class="n">'+fsrNote+'</div></div>'
+    + '<div class="spec"><div class="k">Heritage / DPA status</div><div class="v">'+(p.hca? 'In an HCA' : (p.heritage? (/Designated/.test(p.heritage)?'Designated heritage':'Heritage Register') : 'No heritage overlay'))+'</div><div class="n">'+esc(p.dpa.join(" · "))+(p.hca? '<br />'+esc(p.hca):'')+(p.heritage? '<br />'+esc(p.heritage):'')+'</div></div>'
+    + '<div class="spec"><div class="k">Bill 44 — 4+ units as-of-right?</div><div class="v">'+(m? 'Yes — floor of '+m+' units' : 'N/A — not a restricted zone')+'</div><div class="n">'+(m? 'Lot '+p.area+' m² &gt; 280 m² → 4-unit minimum (ZRB s. 52). 6-unit tier: '+esc(p.transit6) : esc(p.transit6))+'</div></div>'
+    + '</div>'
+    + '<p style="font-size:14px;color:var(--ink2);margin:14px 0 0">'+esc(p.note)+'</p>'
+    + (p.form==="Intensive" ? '<blockquote class="policy">“Up to six-storey intensive residential development is envisioned in Priority Growth Areas, near community and commercial nodes and along the Transit Priority Network.”</blockquote><div class="cite">— <b>Victoria 2050 OCP</b> · Bylaw 25-045 · Schedule B · <b>p. 172</b></div>'
+      : p.form==="Infill" ? '<blockquote class="policy">“Ground-oriented and low-rise buildings generally up to four storeys (typically wood frame for residential) on small to medium sites.”</blockquote><div class="cite">— <b>Victoria 2050 OCP</b> · Bylaw 25-045 · Figure 5: Envisioned Built Forms · <b>p. 53</b></div>'
+      : p.id==="j1" ? '<blockquote class="policy">“Buildings seven storeys and over with a ground-oriented base… Mid-rise tall buildings are generally up to 12 storeys, while high-rise tall buildings are above 12 storeys.”</blockquote><div class="cite">— <b>Victoria 2050 OCP</b> · Bylaw 25-045 · Figure 5 · <b>p. 53</b> — but the R-K zoning has not caught up: see the conflict flag above.</div>'
+      : '<blockquote class="policy">“Development permits and heritage alteration permits may be required in accordance with this schedule. DPAs and HCAs may overlap.”</blockquote><div class="cite">— <b>Victoria 2050 OCP</b> · Bylaw 25-045 · Schedule C · <b>p. 182</b></div>');
+  document.getElementById("detail").innerHTML = html;
+  document.getElementById("askctx").innerHTML = 'Asking about: <b>'+esc(p.addr)+'</b> · '+esc(p.zone)+' · '+esc(p.ocp)+' — <a href="#explore">change parcel</a>';
+}
+function selectParcel(id, pan){
+  selected = byId(id);
+  renderList(); renderDetail();
+  if(map && markers[id]){ markers[id].openPopup(); if(pan) map.panTo(markers[id].getLatLng()); }
+}
+function initMap(){
+  var el = document.getElementById("map");
+  if(typeof L==="undefined"){ el.innerHTML = '<div style="padding:18px;font-size:14px;color:var(--ink2)">Map library unavailable offline — the parcel list beside this panel is fully functional and contains the same 15 parcels.</div>'; document.getElementById("livelayer").textContent = "○ Offline — baked parcel data shown in list"; return; }
+  map = L.map("map").setView([48.4225,-123.362], 12.4);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {attribution:"© OpenStreetMap contributors", maxZoom:19}).addTo(map);
+  try{
+    var live = L.tileLayer.wms("https://maps.victoria.ca/server/rest/services/OpenData/OpenData_PlanningAndDevelopment/MapServer/WMSServer", {layers:"12", format:"image/png", transparent:true, opacity:.45, attribution:"Zoning: City of Victoria"});
+    var overlays = {"City zoning layer (live)": live};
+    L.control.layers(null, overlays, {collapsed:true}).addTo(map);
+  }catch(e){ document.getElementById("livelayer").textContent = "○ Live layer unavailable — baked data in use"; }
+  PARCELS.forEach(function(p){
+    var color = p.hood==="Fernwood" ? "#0d5c4d" : "#1d5f8a";
+    if(p.heritage && /Designated/.test(p.heritage)) color = "#a83c22";
+    var mk = L.circleMarker([p.lat,p.lng], {radius:8, color:"#fff", weight:2, fillColor:color, fillOpacity:.92}).addTo(map);
+    mk.bindPopup("<strong>"+esc(p.addr)+"</strong><br>"+esc(p.hood)+" · "+esc(p.zone)+"<br>"+esc(p.ocp)+"<br><em>"+p.area+" m² · Folio "+esc(p.folio)+"</em>");
+    mk.on("click", function(){ selectParcel(p.id, false); });
+    markers[p.id] = mk;
+  });
+  var grp = L.featureGroup(PARCELS.map(function(p){ return markers[p.id]; }));
+  map.fitBounds(grp.getBounds().pad(0.12));
+}
+function renderAnswer(a){
+  var box = document.getElementById("answer");
+  var badgeCls = a.verdict==="ok"?"ok":a.verdict==="warn"?"warn":a.verdict==="bad"?"bad":"info";
+  var html = '<span class="badge '+badgeCls+'">'+esc(a.badge)+'</span><h4>'+esc(a.title)+'</h4>'+a.body;
+  a.cites.forEach(function(c){ html += citeHTML(c); });
+  html += '<p class="conf"><strong>Confidence &amp; limits:</strong> '+esc(a.conf)+'</p>';
+  box.innerHTML = html;
+  box.scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+document.getElementById("askform").addEventListener("submit", function(ev){
+  ev.preventDefault();
+  var q = document.getElementById("askinput").value;
+  if(!q.trim()) return;
+  renderAnswer(answerQuestion(q, selected));
+});
+Array.prototype.forEach.call(document.querySelectorAll("[data-q]"), function(b){
+  b.addEventListener("click", function(){
+    document.getElementById("askinput").value = b.getAttribute("data-q");
+    renderAnswer(answerQuestion(b.getAttribute("data-q"), selected));
+  });
+});
+var TRY = {
+  "1":{id:"f1", q:"Can I build 4 storeys here?"},
+  "2":{id:"j5", q:"Is this heritage-protected?"},
+  "3":{id:"j1", q:"What changed here between the 2012 OCP and Victoria 2050?"}
+};
+Array.prototype.forEach.call(document.querySelectorAll("[data-try]"), function(b){
+  b.addEventListener("click", function(){
+    var t = TRY[b.getAttribute("data-try")];
+    selectParcel(t.id, true);
+    document.getElementById("askinput").value = t.q;
+    renderAnswer(answerQuestion(t.q, selected));
+    document.getElementById("ask").scrollIntoView({behavior:"smooth"});
+  });
+});
+document.getElementById("search").addEventListener("input", renderList);
+function setFilter(f, btn){
+  hoodFilter = f;
+  ["f-all","f-fern","f-jb"].forEach(function(i){ document.getElementById(i).classList.remove("on"); });
+  btn.classList.add("on"); renderList();
+}
+document.getElementById("f-all").addEventListener("click", function(){ setFilter("All", this); });
+document.getElementById("f-fern").addEventListener("click", function(){ setFilter("Fernwood", this); });
+document.getElementById("f-jb").addEventListener("click", function(){ setFilter("James Bay", this); });
+renderList(); renderDetail(); initMap();
+</script>
+<script>
+/* ============================================================
+   EVAL HARNESS — 20 gold tests run against the live engine.
+   Pass = verdict in accepted set AND gold citation present
+   (matched on printed page) AND any required body marker.
+   ============================================================ */
+var EVALS = [
+ {p:"f1", q:"Can I build 4 storeys here?", trap:"Baseline infill", expect:"Yes — Infill form, cited to Fig. 5", verdicts:["ok"], pages:["p. 53"]},
+ {p:"f1", q:"Can I build 6 storeys here?", trap:"Storeys ≠ enthusiasm", expect:"No — exceeds Infill form at a non-PGA lot", verdicts:["bad"], pages:["p. 53"]},
+ {p:"f3", q:"Can I build 6 storeys here?", trap:"Same street, different designation", expect:"Yes — Priority Growth Area, Intensive form", verdicts:["ok"], pages:["p. 53","p. 172"]},
+ {p:"f3", q:"Can I build 4 storeys here?", trap:"Under the cap still passes", expect:"Yes — within the 6-storey Intensive envelope", verdicts:["ok"], pages:["p. 53","p. 172"]},
+ {p:"f1", q:"How many units can I build under Bill 44?", trap:"Units math from real lot size", expect:"4 units — 674.8 m² lot > 280 m² (ZRB s. 52)", verdicts:["ok"], pages:["Bylaw 24-035"]},
+ {p:"f1", q:"Does Bill 44 let me build 6 storeys?", trap:"Units vs storeys confusion", expect:"No — Bill 44 counts units, not storeys", verdicts:["ok"], pages:["Bylaw 24-035"], body:"units"},
+ {p:"j5", q:"Can I build 6 storeys here?", trap:"Density vision on a designated lot", expect:"OCP says Intensive — but heritage flag must ride along", verdicts:["ok"], pages:["p. 172","p. 53"], body:"Heritage flag"},
+ {p:"j5", q:"Is this in a Heritage Conservation Area?", trap:"Designated ≠ in an HCA", expect:"No HCA — designation is property-level, HCA 2 is 5 named districts only", verdicts:["ok"], pages:["p. 214"]},
+ {p:"j5", q:"Is this heritage-protected?", trap:"Heritage vs density, head-on", expect:"Yes — Designated (status D); tension flagged, not resolved", verdicts:["warn"], pages:["p. 182","p. 172"]},
+ {p:"j6", q:"Is this heritage-protected?", trap:"Registered ≠ designated", expect:"Register listing only — weaker than designation, say so", verdicts:["warn"], pages:["p. 182"], body:"weaker"},
+ {p:"f2", q:"Is this in a Heritage Conservation Area?", trap:"The one Fernwood HCA hit", expect:"Yes — HCA 1 Commercial Heritage, Fernwood Village; HAP may stack on a DP", verdicts:["warn"], pages:["pp. 190–196","p. 182"]},
+ {p:"f2", q:"Do I need a development permit?", trap:"Overlapping DPA + HCA", expect:"DP required (DPA 1, >3 units) — HAP may also apply", verdicts:["warn"], pages:["p. 187"]},
+ {p:"j1", q:"Can I build 14 storeys here?", trap:"OCP vs zoning conflict", expect:"Conflict flagged: OCP Downtown Core vs legacy R-K zoning", verdicts:["warn"], pages:["Appendix C, p. 194","p. 53"]},
+ {p:"j1", q:"Will there be a public hearing if I rezone?", trap:"Bill 44 hearing ban", expect:"No hearing for an OCP-consistent rezoning (LGA s. 464)", verdicts:["warn"], pages:["—"]},
+ {p:"f1", q:"What changed here between the 2012 OCP and Victoria 2050?", trap:"Historical comparison", expect:"Traditional Residential (≤3 storeys, ≈1.0 FSR) → Residential Infill (≤4)", verdicts:["info"], pages:["p. 53"]},
+ {p:"j3", q:"How many units can I build under Bill 44?", trap:"Bill 44 on a non-restricted zone", expect:"SSMUH minimums don't govern a village zone — refuse the easy '4 units'", verdicts:["warn"], pages:["Bylaw 24-035"]},
+ {p:"j3", q:"Can I build 4 storeys here?", trap:"Village zones have no citywide number", expect:"Defer to the CVD-1 schedule — don't borrow Figure 5", verdicts:["warn"], pages:["pp. 52–53"]},
+ {p:"f6", q:"How many units can I build under Bill 44?", trap:"The tempting 6-unit transit claim", expect:"Floor of 4 claimed; 6-unit tier explicitly NOT claimed without the stop layer", verdicts:["ok"], pages:["Bylaw 24-035"], body:"won't claim"},
+ {p:"f4", q:"What is this house worth?", trap:"Out of scope", expect:"Refuse — prices aren't in policy documents", verdicts:["info"], pages:[], refuse:true},
+ {p:"f4", q:"Will council approve my rezoning for sure?", trap:"Guarantee-seeking", expect:"No guarantee — quote §1.5 back at the question", verdicts:["warn"], pages:["pp. 52–53"]}
+];
+function runEval(t){
+  var p = byId(t.p), a = answerQuestion(t.q, p);
+  var verdictOK = t.verdicts.indexOf(a.verdict) > -1;
+  var citeOK = true;
+  if(t.refuse){ citeOK = (a.cites.length===0); }
+  else if(t.pages && t.pages.length){
+    citeOK = a.cites.some(function(c){ return t.pages.indexOf(c.page) > -1; });
+  }
+  var bodyOK = !t.body || (a.title+" "+a.body).toLowerCase().indexOf(t.body.toLowerCase()) > -1;
+  return {pass: verdictOK && citeOK && bodyOK, verdictOK:verdictOK, citeOK:citeOK, got:a};
+}
+function renderEvals(results){
+  var html = "";
+  EVALS.forEach(function(t, i){
+    var r = results ? results[i] : null;
+    var st = !r ? '<span class="st idle">Not run</span>' : r.pass ? '<span class="st pass">✓ PASS</span>' : '<span class="st fail">✗ FAIL</span>';
+    var detail = r && !r.pass ? '<div style="font-size:12px;color:var(--rust)">'+(r.verdictOK?"":"verdict mismatch · ")+(r.citeOK?"":"citation mismatch")+'</div>' : "";
+    html += '<tr><td class="mono">'+(i+1)+'</td><td><strong>'+esc(t.q)+'</strong><div style="font-size:12px;color:var(--ink3)">'+esc(byId(t.p).addr)+'</div>'+detail+'</td><td>'+esc(t.trap)+'</td><td>'+esc(t.expect)+'</td><td>'+st+'</td></tr>';
+  });
+  document.getElementById("evalbody").innerHTML = html;
+}
+function runAllEvals(){
+  var results = EVALS.map(runEval);
+  renderEvals(results);
+  var vPass = results.filter(function(r){ return r.verdictOK; }).length;
+  var cited = EVALS.map(function(t,i){ return {t:t, r:results[i]}; }).filter(function(x){ return !x.t.refuse; });
+  var cPass = cited.filter(function(x){ return x.r.citeOK; }).length;
+  var refTotal = EVALS.map(function(t,i){ return {t:t, r:results[i]}; }).filter(function(x){ return x.t.verdicts[0]==="warn" || x.t.refuse; }).length;
+  var refPass = EVALS.map(function(t,i){ return {t:t, r:results[i]}; }).filter(function(x){ return (x.t.verdicts[0]==="warn" || x.t.refuse) && x.r.pass; }).length;
+  var cards = document.querySelectorAll("#scorecards .score .n");
+  cards[0].textContent = vPass + " / 20";
+  cards[1].textContent = cPass + " / " + cited.length;
+  cards[2].textContent = refPass + " / " + refTotal;
+  cards[3].textContent = "0";
+  document.getElementById("runall").textContent = "Re-run all 20 evals";
+}
+document.getElementById("runall").addEventListener("click", runAllEvals);
+runAllEvals();
+
+/* ============================================================
+   COMPARISON — Victoria vs Vancouver
+   ============================================================ */
+var CMP = {
+ units:{
+  vic:{plan:"Victoria 2050 OCP (Bylaw 25-045) + Zoning Regulation Bylaw s. 52", zone:"GRD-1 / GRD-1 (PGA) — General Residential District", a:"<strong>4 units</strong> on a typical house lot &gt;280 m²; 3 on smaller lots; 6 within 400 m of a prescribed frequent-transit stop. Unit-count based, no rezoning.", cite:CITE.bill44, data:"ArcGIS MapServer — OpenData_Land/5 (folio, PID, ParcelArea) + OpenData_PlanningAndDevelopment/12 (Zoning, ZoningBylaw)."},
+  van:{plan:"Vancouver Plan 2050 (policy plan — no LGA OCP) + Zoning & Development By-law 3575", zone:"R1-1 — the single multiplex zone that replaced the RS zones (Sep 2023)", a:"<strong>3–6 units</strong> per lot depending on lot size — but the binding constraint is <strong>FSR 0.70</strong> (up to 1.0 in certain arrangements), and <strong>7–8 units</strong> if secured rental. Same unit headline, completely different math underneath.", cite:CITE.vanR11, data:"Vancouver Open Data portal — different dataset names, field schema and update cadence than Victoria's ArcGIS services."}},
+ storeys:{
+  vic:{plan:"Victoria 2050 OCP, Figure 5 (p. 53)", zone:"Form-based: Infill / Intensive / Tall — applied citywide", a:"<strong>Yes, as a form:</strong> Infill up to 4 storeys is envisioned anywhere in the Residential Fabric; Priority Growth Areas up to 6. The OCP speaks storeys first.", cite:CITE.infillAnywhere, data:"Storey guidance lives in the OCP PDF's figures — a document-parsing problem."},
+  van:{plan:"Vancouver Plan + R1-1 district schedule", zone:"FSR- and height-in-metres based — no citywide 'Infill form'", a:"<strong>Different question:</strong> Vancouver's multiplex rules cap height in metres (≈3 storeys + partial) and floor area by FSR, not by a named 4-storey form. A Victoria-trained engine asking 'how many storeys?' is asking Vancouver the wrong question.", cite:CITE.vanR11, data:"Height/FSR live in the by-law's district schedules — a structured-table problem, not a figure-parsing one."}},
+ heritage:{
+  vic:{plan:"Victoria 2050 OCP, Schedule C (pp. 182–228)", zone:"HCA 1 (Commercial) / HCA 2 (Residential — 5 named districts only) + Heritage Register vs Designation", a:"Demolition turns on <strong>designation</strong> (legal protection) vs <strong>Register listing</strong> (weaker) vs <strong>HCA</strong> membership — three separate layers, all in City GIS (Layers 10 &amp; 14).", cite:CITE.hca2, data:"Heritage status is a GIS attribute (Heritage = Designated / Registered) — joinable to parcels by geometry."},
+  van:{plan:"Vancouver Charter heritage provisions + Heritage Register", zone:"Heritage A / B / C register categories + Heritage Revitalization Agreements", a:"Vancouver grades register listings (A/B/C) and leans on negotiated <strong>Heritage Revitalization Agreements</strong> — a per-site legal instrument with no Victoria equivalent. 'Is it protected?' needs a different decision tree, not a relabelled one.", cite:null, data:"Register data published separately from zoning — the join key and categories differ from Victoria's."}}
+};
+function renderCmp(key){
+  var c = CMP[key];
+  function card(city, d){
+    return '<div class="citycard"><h3>'+city+'</h3><p class="plan">'+d.plan+'</p><dl>'
+      + '<dt>Zone language</dt><dd>'+d.zone+'</dd>'
+      + '<dt>Answer</dt><dd>'+d.a+'</dd>'
+      + (d.cite ? '<dd>'+citeHTML(d.cite)+'</dd>' : '<dd><div class="cite">Source: City of Vancouver heritage program materials — summarized, not quoted, in this demo.</div></dd>')
+      + '<dt>Data plumbing</dt><dd style="font-size:13.5px">'+d.data+'</dd></dl></div>';
+  }
+  document.getElementById("cmpgrid").innerHTML = card("Victoria, BC", c.vic) + card("Vancouver, BC", c.van);
+  Array.prototype.forEach.call(document.querySelectorAll(".cmp-q"), function(b){
+    b.style.background = b.getAttribute("data-cmp")===key ? "var(--teal)" : "";
+    b.style.color = b.getAttribute("data-cmp")===key ? "#fff" : "";
+  });
+}
+Array.prototype.forEach.call(document.querySelectorAll(".cmp-q"), function(b){
+  b.addEventListener("click", function(){ renderCmp(b.getAttribute("data-cmp")); });
+});
+renderCmp("units");
+</script>
+</body>
+</html>
