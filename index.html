@@ -189,13 +189,15 @@
   }
   .disclaimer{margin-top:16px;border:1.5px solid var(--rust);background:var(--rust-soft);border-radius:var(--r);padding:14px 16px;font-size:14px}
   .foot{margin-top:26px;font-size:12.5px;color:var(--ink3);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
-  .leaflet-popup-content{font-family:"Public Sans",sans-serif;font-size:13.5px}
+  .leaflet-popup-content{font-family:"Public Sans",sans-serif;font-size:13.5px;margin:12px 14px;line-height:1.45;max-width:260px;overflow-wrap:break-word}
+  .leaflet-popup-content-wrapper{border-radius:10px}
+  .srctable th:nth-child(3),.srctable td:nth-child(3){white-space:nowrap;min-width:118px;width:118px}
   .hidden{display:none!important}
 </style>
 </head>
 <body>
 <div class="topbar"><div class="topbar-in">
-  <div class="for">Built by <strong>Sadhik Ahamed Shaik Mohammed</strong> for <strong>Peter &amp; the Fernwood Agentic team</strong> — Urbora's problem, one city deep: land-use policy, real parcels, and citations you can check yourself.</div>
+  <div class="for">Built by <strong>Sadhik Ahamed Shaik Mohammed</strong> — <strong>Cloud &amp; Security Engineer, Absolute Security</strong> — for <strong>Peter &amp; the Fernwood Agentic team</strong> — Urbora's problem, one city deep: land-use policy, real parcels, and citations you can check yourself.</div>
   <nav class="navchips" aria-label="Sections">
     <a href="#explore">Map &amp; parcels</a><a href="#ask">Ask</a><a href="#eval">Eval harness</a><a href="#compare">Victoria vs Vancouver</a><a href="#sources">Sources</a>
   </nav>
@@ -204,7 +206,8 @@
 <div class="wrap">
   <div class="lede">
     <h1>Ask what you can build on a Victoria lot — <em>get the policy, cited.</em></h1>
-    <p class="sub">Pick a parcel in <strong>Fernwood</strong> or <strong>James Bay</strong> and ask what can be built on it. The answers come from <strong>Victoria 2050</strong> (adopted Oct 2, 2025, Bylaw No. 25-045), the City's zoning bylaws, and BC's <strong>Bill 44</strong>, each with the exact quote, section and page. Where the OCP and the zoning disagree, the answer flags the disagreement instead of picking a side.</p>
+    <p class="sub">Pick a parcel in <strong>Fernwood</strong> or <strong>James Bay</strong> and ask what can be built on it. The answers come from <strong>Victoria 2050</strong> (adopted Oct 2, 2025, Bylaw No. 25-045), the City's zoning bylaws, and BC's <strong>Bill 44</strong>, each with the exact quote, section and page. Where the OCP and the zoning disagree, the answer flags the disagreement instead of picking a side. <strong>Ask one of these seven questions — every answer cited, or it refuses.</strong> Those seven, listed in section 02, are the only questions this demo answers, for these 15 parcels.</p>
+    <p style="margin:10px 0 0;color:var(--ink2);font-size:14px">Sadhik Ahamed Shaik Mohammed · Cloud &amp; Security Engineer, Absolute Security · Victoria, BC</p>
     <div class="trustrow">
       <div class="trust"><b>15</b> real parcels · City GIS snapshot, Nov 19, 2026</div>
       <div class="trust"><b>8</b> sources, listed in full in section 05</div>
@@ -220,7 +223,7 @@
 
   <section class="blk" id="explore">
     <div class="blk-head"><span class="no">01</span><h2>Pick a parcel</h2>
-      <p>Addresses, folios, PIDs and lot sizes are the City of Victoria's own records, pulled from its public ArcGIS servers on Nov 19, 2026. Zone, Development Permit Area and heritage status are point-in-polygon results against the City's Planning &amp; Development layers. Click a marker or a card.</p>
+      <p>Addresses, folios, PIDs and lot sizes are the City of Victoria's own records, pulled from its public ArcGIS servers on Nov 19, 2026. Zone, Development Permit Area and heritage status are point-in-polygon results against the City's Planning &amp; Development layers. The City's live zoning layer is on by default — you can toggle it in the map's layer control. Click a marker or a card.</p>
     </div>
     <div class="searchrow" style="margin-top:10px">
       <input id="search" type="search" placeholder="Search by address — e.g. “Menzies”, “1300 Gladstone”, “Quebec”…" aria-label="Search parcels by address" />
@@ -231,7 +234,7 @@
     <div class="explorer">
       <div class="mapcard">
         <div id="map" role="img" aria-label="Map of Fernwood and James Bay parcels in Victoria, BC"></div>
-        <div class="mapfoot"><span id="mapstatus">Basemap © OpenStreetMap contributors · Parcels: City of Victoria Open Data (Open Government Licence)</span><span class="live" id="livelayer">● Live City zoning layer available — toggle in map</span></div>
+        <div class="mapfoot"><span id="mapstatus">Basemap © OpenStreetMap contributors · Parcels: City of Victoria Open Data (Open Government Licence)</span><span class="live" id="livelayer">● Live City zoning layer on by default — toggle in map</span></div>
       </div>
       <div class="sidecol"><div class="plist" id="plist"></div></div>
     </div>
@@ -239,16 +242,17 @@
   </section>
 
   <section class="blk" id="ask">
-    <div class="blk-head"><span class="no">02</span><h2>Ask in plain English</h2>
-      <p>Every answer is assembled from the sources listed in section 05, and nothing else. You get one of three things: an answer with its citation, a flagged conflict between the OCP and the legal zoning, or a straight “the sources don't settle this.”</p>
+    <div class="blk-head"><span class="no">02</span><h2>Ask one of these seven questions</h2>
+      <p>Ask one of these seven questions — every answer cited, or it refuses. That's the whole scope, on purpose: this demo only covers these seven questions, for these 15 parcels, from the sources listed in section 05 and nothing else. You get one of three things: an answer with its citation, a flagged conflict between the OCP and the legal zoning, or a friendly refusal that points you to the closest question it can answer. Anything else — secondary suites, setbacks, parking, subdivision, prices — is outside this demo, and it will say so plainly rather than guess.</p>
     </div>
     <div class="askbox">
       <div class="askctx" id="askctx"></div>
       <form class="askrow" id="askform">
-        <input id="askinput" type="text" placeholder="e.g. Can I build 6 storeys here? · Is this in a Heritage Conservation Area? · How many units does Bill 44 allow?" aria-label="Ask a question about the selected parcel" />
+        <input id="askinput" type="text" placeholder="Pick one of the seven below, or type it in your own words — e.g. Can I build 6 storeys here?" aria-label="Ask a question about the selected parcel" />
         <button class="btn" type="submit">Ask</button>
       </form>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+      <p style="margin:12px 0 0;font-size:13px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em">The seven questions — the only ones this demo answers</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
         <button class="qchip" data-q="Can I build 4 storeys here?">Can I build 4 storeys here?</button>
         <button class="qchip" data-q="Can I build 6 storeys here?">Can I build 6 storeys here?</button>
         <button class="qchip" data-q="How many units can I build under Bill 44?">How many units under Bill 44?</button>
@@ -263,7 +267,7 @@
 
   <section class="blk" id="eval">
     <div class="blk-head"><span class="no">03</span><h2>Eval harness</h2>
-      <p>Twenty questions I wrote to try to break it: Bill 44 vs OCP conflicts, heritage vs density, 2012 vs 2050 changes, and questions it has to refuse. A pass needs the right verdict <em>and</em> a citation whose document, section and page match the answer I marked correct beforehand.</p>
+      <p>Twenty questions I wrote to try to break it: Bill 44 vs OCP conflicts, heritage vs density, 2012 vs 2050 changes, and questions it has to refuse. A pass needs the right verdict <em>and</em> a citation whose document, section and page match the answer I marked correct beforehand. The citation score is out of 19, not 20, because question 19 — “What is this house worth?” — is an out-of-scope refusal that correctly carries no citation at all: prices aren't in the policy sources, so there is nothing honest to cite for it.</p>
     </div>
     <div class="evalbar">
       <button class="btn" id="runall">Run all 20 evals</button>
@@ -314,7 +318,7 @@
       <tr><td><strong>Housing Statutes (Residential Development) Amendment Act, 2023 — “Bill 44”</strong></td><td class="mono">SBC 2023 · Amends Local Government Act ss. 464, 481.3 (SSMUH) · Still in force Nov 2026</td><td class="mono">Nov 19, 2026</td><td>Unit minimums by lot size / transit proximity; no-hearing rule for OCP-consistent rezonings</td></tr>
       <tr><td><strong>City of Victoria Open Data — Parcels (Folio based), Layer 5</strong><br /><span class="mono" style="font-size:11.5px">maps.victoria.ca/server/rest/services/OpenData/OpenData_Land/MapServer/5</span></td><td class="mono">Live service, ArcGIS 11.3 · Open Government Licence — City of Victoria</td><td class="mono">Nov 19, 2026</td><td>Address, folio, PID, lot area (m²), actual use for all 15 parcels</td></tr>
       <tr><td><strong>City of Victoria Open Data — Planning &amp; Development, Layers 10–14</strong><br /><span class="mono" style="font-size:11.5px">maps.victoria.ca/server/rest/services/OpenData/OpenData_PlanningAndDevelopment/MapServer</span></td><td class="mono">Live service · Zoning (12), DPA (11), HCA (14), Heritage Properties (10)</td><td class="mono">Nov 19, 2026</td><td>Zone, DPA, HCA and heritage status per parcel (point-in-polygon)</td></tr>
-      <tr><td><strong>Vancouver comparison</strong> — Vancouver Plan 2050; Zoning &amp; Development By-law No. 3575, R1-1 district (multiplex amendments, Sep 2023)</td><td class="mono">R1-1 consolidated former RS zones · FSR 0.70 base / 1.0 conditional</td><td class="mono">Nov 19, 2026</td><td>Section 04 only — there to show where the two cities' schemas diverge</td></tr>
+      <tr><td><strong>Vancouver comparison</strong> — Vancouver Plan 2050; Zoning &amp; Development By-law No. 3575, R1-1 district (multiplex amendments, Sep 2023)<br /><a href="https://bylaws.vancouver.ca/zoning/zoning-by-law-district-schedule-R1-1.pdf" target="_blank" rel="noopener">bylaws.vancouver.ca — R1-1 District Schedule (By-law No. 3575)</a></td><td class="mono">By-law No. 3575 · R1-1 District Schedule, §1 Intent and Overview, §1.1 Intent · p. 1 · R1-1 consolidated former RS zones · FSR 0.70 base / 1.0 conditional</td><td class="mono">Nov 19, 2026</td><td>Section 04 only — there to show where the two cities' schemas diverge</td></tr>
     </tbody></table></div>
     <div class="disclaimer"><strong>Not legal or planning advice.</strong> I built Ask Victoria 2050 from public sources to show how policy Q&amp;A with proper citations could work inside a product like Urbora. The OCP states the vision; the zoning bylaw is the law — and §1.5 of the OCP itself warns that the plan “does not grant development rights” and the City “is not obligated to approve any such application, even if it aligns with this plan.” Before relying on anything here, confirm the current zone schedule and permit requirements with the City of Victoria's Development Services (250-361-0382) or a qualified planner / lawyer. Parcel data © City of Victoria, Open Government Licence.</div>
     <div class="foot"><span>Sadhik Ahamed Shaik Mohammed · Cloud &amp; Security Engineer, Absolute Security · Victoria, BC · Nov 19, 2026</span><span>Corrections welcome: <a href="mailto:Sadhik021@gmail.com">Sadhik021@gmail.com</a></span></div>
@@ -360,7 +364,7 @@ var CITE = {
     quote:"Areas designated as Urban Residential in James Bay in the 2012 OCP to be designated as Priority Growth Areas… Areas designated as Traditional Residential in James Bay in the 2012 OCP to be designated as Residential Infill."},
   quebecBoundary: {doc:"Victoria 2050 OCP, Appendix C (Downtown Core boundary)", bylaw:"Bylaw 25-045", sec:"Appendix C map — 205 Quebec St moved into expanded Downtown Core", page:"Appendix C, p. 194",
     quote:"The plan had placed the site inside an expanded downtown area, which made the rezoning consistent with the plan and barred a hearing on it under provincial law."},
-  vanR11: {doc:"City of Vancouver — Zoning & Development By-law No. 3575", bylaw:"By-law 3575", sec:"R1-1 district (multiplex amendments, Sep 2023)", page:"—",
+  vanR11: {doc:"City of Vancouver — Zoning & Development By-law No. 3575", bylaw:"By-law 3575", sec:"R1-1 District Schedule, §1 Intent and Overview, §1.1 Intent (multiplex amendments, Sep 2023)", page:"p. 1",
     quote:"Vancouver… created a single residential zone (R1-1) covering most of the city and replacing previous single-family (RS) zones. The new bylaw and zone R1-1 allows for multiplexing and having 3–6 units per lot… increased to 7 or 8 if the units are purpose-built rentals."}
 };
 
@@ -470,9 +474,9 @@ function answerQuestion(rawQ, p){
   var q = (rawQ||"").toLowerCase();
   /* --- out of scope: must refuse --- */
   if(/price|worth|rent cost|how much rent|school|crime|safe|invest|buy|sell|mortgage|real estate agent|weather/.test(q) && !/storey|storeys|unit|zone|heritage|permit|hearing/.test(q)){
-    return ans("info","Out of scope — no answer","That's outside what land-use policy sources can answer",
-      "<p>I only answer from Victoria 2050, the zoning bylaws and Bill 44 on this page. Prices, rents, schools, safety and investment merit aren't in those documents, so any answer would be invented. Try asking about storeys, units, zoning, heritage or permits for <strong>"+p.addr+"</strong> instead.</p>",
-      [], "Prices and rents aren't in any of the sources listed in section 05, so there is nothing to cite.");
+    return ans("info","Outside the seven questions","Sorry — that's not a question I can help with here",
+      "<p>This little demo only covers seven questions, for these 15 parcels, and that isn't one of them. Prices, rents, schools, safety and whether something is a good investment aren't in Victoria 2050, the zoning bylaws or Bill 44, so I'd just be making an answer up — and I'd rather not. The closest question I <em>can</em> answer for <strong>"+p.addr+"</strong> is: “How many units can I build under Bill 44?” — it gets at what the lot can actually hold. The other six are listed just above the Ask box.</p>",
+      [], "No hard feelings here — it's just outside the seven questions and the sources in section 05, so there is nothing honest to cite for it.");
   }
   if(/guarantee|for sure|will council approve|will my (application|rezoning|permit) (be approved|pass)|legal advice/.test(q)){
     return ans("warn","Cannot guarantee","No document can guarantee an approval — and the OCP says so itself",
@@ -562,10 +566,17 @@ function answerQuestion(rawQ, p){
       "<p>No designation, covenant or HCA is recorded for this parcel, so heritage law isn't the obstacle. Demolition and redevelopment still need the usual permits, and TDPA 1 tenant-protection rules apply if tenants are displaced.</p>",
       [CITE.dpaSummary], "Scoped to the pinned layers; a title search is the backstop for covenants.");
   }
-  /* --- fallback --- */
-  return ans("info","Not in the pinned sources","I can't answer that from Victoria 2050, the zoning bylaws or Bill 44",
-    "<p>The question doesn't map to a provision in the sources I've pinned for <strong>"+p.addr+"</strong>. Rather than improvise, here are questions that do: storeys (“Can I build 4 storeys here?”), units (“How many units under Bill 44?”), heritage (“Is this in a Heritage Conservation Area?”), permits, public hearings, and 2012-vs-2050 changes.</p>",
-    [], "If it isn't in the sources in section 05, I'd rather say so than improvise an answer.");
+  /* --- fallback: friendly refusal, closest supported question --- */
+  var closest = "Can I build 4 storeys here?";
+  if(/suite|setback|parking|subdiv|density|fsr|floor space|unit|multiplex|laneway/.test(q)) closest = "How many units can I build under Bill 44?";
+  else if(/heritage|hca|conservation|demolish|tear down/.test(q)) closest = "Is this in a Heritage Conservation Area?";
+  else if(/permit|approval process/.test(q)) closest = "Do I need a development permit?";
+  else if(/hearing|rezon/.test(q)) closest = "Will there be a public hearing if I rezone?";
+  else if(/change|2012|old|previous|used to/.test(q)) closest = "What changed here between the 2012 OCP and Victoria 2050?";
+  else if(/6|six/.test(q)) closest = "Can I build 6 storeys here?";
+  return ans("info","Outside the seven questions","Sorry — that's outside the seven questions this demo covers",
+    "<p>I hear you — that's a fair question to ask about a lot, it's just not one of the seven this demo covers. I only answer those seven, for these 15 parcels, from Victoria 2050, the zoning bylaws and Bill 44 — things like secondary suites, setbacks, parking and subdivision aren't covered here, so guessing would do you no good. The closest question I <em>can</em> answer for <strong>"+p.addr+"</strong> is: “"+closest+"” — try that one, or pick any of the seven listed just above the Ask box.</p>",
+    [], "Outside the seven on purpose: if it isn't covered for this parcel in the sources in section 05, I'd rather point you to the closest question I can answer properly than improvise one I can't cite.");
 }
 </script>
 <script>
@@ -645,14 +656,15 @@ function initMap(){
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {attribution:"© OpenStreetMap contributors", maxZoom:19}).addTo(map);
   try{
     var live = L.tileLayer.wms("https://maps.victoria.ca/server/rest/services/OpenData/OpenData_PlanningAndDevelopment/MapServer/WMSServer", {layers:"12", format:"image/png", transparent:true, opacity:.45, attribution:"Zoning: City of Victoria"});
+    live.addTo(map);
     var overlays = {"City zoning layer (live)": live};
     L.control.layers(null, overlays, {collapsed:true}).addTo(map);
   }catch(e){ document.getElementById("livelayer").textContent = "○ Live layer unavailable — baked data in use"; }
   PARCELS.forEach(function(p){
     var color = p.hood==="Fernwood" ? "#0d5c4d" : "#1d5f8a";
     if(p.heritage && /Designated/.test(p.heritage)) color = "#a83c22";
-    var mk = L.circleMarker([p.lat,p.lng], {radius:8, color:"#fff", weight:2, fillColor:color, fillOpacity:.92}).addTo(map);
-    mk.bindPopup("<strong>"+esc(p.addr)+"</strong><br>"+esc(p.hood)+" · "+esc(p.zone)+"<br>"+esc(p.ocp)+"<br><em>"+p.area+" m² · Folio "+esc(p.folio)+"</em>");
+    var mk = L.circleMarker([p.lat,p.lng], {radius:5, color:"#fff", weight:1.5, fillColor:color, fillOpacity:.92}).addTo(map);
+    mk.bindPopup("<strong>"+esc(p.addr)+"</strong><br>"+esc(p.hood)+" · "+esc(p.zone)+"<br>"+esc(p.ocp)+"<br><em>"+p.area+" m² · Folio "+esc(p.folio)+"</em>", {maxWidth:280, minWidth:180, autoPan:true, keepInView:true, autoPanPaddingTopLeft:L.point(28,28), autoPanPaddingBottomRight:L.point(28,28), closeButton:true});
     mk.on("click", function(){ selectParcel(p.id, false); });
     markers[p.id] = mk;
   });
